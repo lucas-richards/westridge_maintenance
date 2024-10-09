@@ -92,6 +92,7 @@ class Asset(models.Model):
         ],
         null=False,
         blank=False,
+        default='office',
     )
     description = models.TextField(null=True, blank=True)
     serial_number = models.CharField(max_length=255, null=True, blank=True)

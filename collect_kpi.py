@@ -132,21 +132,21 @@ class Command(BaseCommand):
         for work_order in work_orders:
             last_work_order_record = work_order.workorderrecord_set.last()
             if last_work_order_record:
-                print('last_work_order_record:', last_work_order_record, last_work_order_record.recurrence)
+                print('last_work_order_record:', last_work_order_record, work_order.recurrence)
                 if last_work_order_record.status in ['done', 'cancelled']:
                     if work_order.recurrence == 'daily':
                         new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=1))
                         print('new:', new)
-                    elif work_order.recurrence == 'weekly':
+                    elif work_order.recurrence == 'Weekly':
                         new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=7))
                         print('new:', new)
-                    elif work_order.recurrence == 'monthly':
+                    elif work_order.recurrence == 'Monthly':
                         new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=30))
-                    elif work_order.recurrence == 'quarterly':
+                    elif work_order.recurrence == 'Quarterly':
                         new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=90))
-                    elif work_order.recurrence == 'biannually':
+                    elif work_order.recurrence == 'Biannually':
                         new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=180))
-                    elif work_order.recurrence == 'yearly':
+                    elif work_order.recurrence == 'Yearly':
                         new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=365))
 
             else:
