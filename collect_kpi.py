@@ -18,7 +18,7 @@ class Command(BaseCommand):
     
     def save_kpi(self, kpi_name, value):
         kpi, created = KPI.objects.get_or_create(name=kpi_name)
-        today = date.today()
+        today = timezone.now().date()
         KPIValue.objects.update_or_create(
             kpi=kpi,
             date=today,
@@ -27,7 +27,7 @@ class Command(BaseCommand):
 
     def save_kpi2(self, kpi_name, value):
         kpi, created = KPI2.objects.get_or_create(name=kpi_name)
-        today = date.today()
+        today = timezone.now().date()
         KPIValue2.objects.update_or_create(
             kpi=kpi,
             date=today,
@@ -35,7 +35,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **kwargs):
-        today = date.today()
+        today = timezone.now().date()
         profiles = Profile.objects.all()
         active_profiles = profiles.filter(active=True)
         training_modules = TrainingModule.objects.filter(other=False).order_by('name')
@@ -132,18 +132,21 @@ class Command(BaseCommand):
         for work_order in work_orders:
             last_work_order_record = work_order.workorderrecord_set.last()
             if last_work_order_record:
+                print('last_work_order_record:', last_work_order_record, last_work_order_record.recurrence)
                 if last_work_order_record.status in ['done', 'cancelled']:
-                    if work_order.recurrence == 'Daily':
-                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now())
-                    elif work_order.recurrence == 'Weekly':
+                    if work_order.recurrence == 'daily':
+                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=1))
+                        print('new:', new)
+                    elif work_order.recurrence == 'weekly':
                         new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=7))
-                    elif work_order.recurrence == 'Monthly':
+                        print('new:', new)
+                    elif work_order.recurrence == 'monthly':
                         new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=30))
-                    elif work_order.recurrence == 'Quarterly':
+                    elif work_order.recurrence == 'quarterly':
                         new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=90))
-                    elif work_order.recurrence == 'Biannually':
+                    elif work_order.recurrence == 'biannually':
                         new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=180))
-                    elif work_order.recurrence == 'Yearly':
+                    elif work_order.recurrence == 'yearly':
                         new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=365))
 
             else:
