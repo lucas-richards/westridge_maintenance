@@ -208,7 +208,7 @@
                                 <div class="flex-container">
                                     <h6 class="mr-3 btn btn-sm btn-outline-primary">${data.recurrence}</h6>
                                     ${data.last_record_status === 'done' || data.last_record_status === 'cancelled' ? '':
-                                        `<h6> <span class=" ${data.time_until_due < 0 ? 'text-danger' : 'font-weight-bold'}">${data.status === 'done'? '' : data.time_until_due < 0 ? 'Overdue' : 'Next due in ' + data.time_until_due + ' days'} </span></h6>`
+                                        `<h6> <span class=" ${data.time_until_due < 0 ? 'text-danger' : data.time_until_due == 0 ? 'text-success':'font-weight-bold'}">${data.status === 'done'? '' : data.time_until_due < 0 ? 'Overdue' : data.time_until_due == 0 ? 'Today': 'Next due in ' + data.time_until_due + ' days'} </span></h6>`
                                     }
                                     {% if user.is_authenticated %}
                                         <button id="edit-button" class="btn btn-primary">Edit WO</button>

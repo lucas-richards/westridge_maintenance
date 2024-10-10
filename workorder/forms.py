@@ -29,6 +29,17 @@ class WorkOrderEditForm(forms.ModelForm):
             'first_due_date': forms.DateInput(attrs={'type': 'date'}),
             'assigned_to': forms.Select(choices=User.objects.order_by('username').values_list('username', 'username')),
         }
+
+class AssetWorkOrderNewForm(forms.ModelForm):
+    class Meta:
+        model = WorkOrder
+        fields = ['recurrence','first_due_date','title','assigned_to', 'department_assigned_to','image','description', 'priority', 'attachments', ]
+        widgets = {
+            'priority': forms.Select(choices=CRITICALITY_CHOICES),
+            'first_due_date': forms.DateInput(attrs={'type': 'date'}),
+            'assigned_to': forms.Select(choices=User.objects.order_by('username').values_list('username', 'username')),
+        }
+
 # form to create a work order record
 class WorkOrderRecordForm(forms.ModelForm):
     class Meta:

@@ -153,6 +153,18 @@ class Command(BaseCommand):
                 WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now())
 
 
+        # get the last record or each work order and check for those with status different from done and cancelled if they are overdue by checking if the due date is later than today
+        work_orders = WorkOrder.objects.all()
+        overdue = 0
+        for work_order in work_orders:
+            last_work_order_record = work_order.workorderrecord_set.last()
+            if last_work_order_record and last_work_order_record.status not in ['done', 'cancelled'] and last_work_order_record.due_date < timezone.now():
+                overdue += 1
+        # save to over due kpi
+        self.save_kpi2('Overdue', overdue)
+        print('overdue:', overdue)
+
+
         # if there are no work orders records for today, then set the productivity kpi value to 0
         
         work_order_records_today = WorkOrderRecord.objects.filter(completed_on=today).count()

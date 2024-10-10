@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
 import json
-from .forms import AssetEditForm, WorkOrderEditForm, WorkOrderRecordForm, WorkOrderRecordEditForm
+from .forms import AssetEditForm, WorkOrderEditForm, WorkOrderRecordForm, WorkOrderRecordEditForm, AssetWorkOrderNewForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -75,6 +75,9 @@ def dashboard(request):
     productivity_kpi = KPIValue.objects.filter(kpi__name='Productivity', date__gte=timezone.now() - datetime.timedelta(days=30)).order_by('date')
     productivity_kpi_values = [value.value for value in productivity_kpi]
     productivity_kpi_dates = [value.date.strftime('%m-%d-%Y') for value in productivity_kpi]
+    overdue_kpi = KPIValue.objects.filter(kpi__name='Overdue', date__gte=timezone.now() - datetime.timedelta(days=30)).order_by('date')
+    overdue_kpi_values = [value.value for value in overdue_kpi]
+    overdue_kpi_dates = [value.date.strftime('%m-%d-%Y') for value in overdue_kpi]
 
 
     context = {
@@ -86,6 +89,8 @@ def dashboard(request):
         'timing_kpi_dates': timing_kpi_dates,
         'productivity_kpi_values': productivity_kpi_values,
         'productivity_kpi_dates': productivity_kpi_dates,
+        'overdue_kpi_values': overdue_kpi_values,
+        'overdue_kpi_dates': overdue_kpi_dates,
         'assets_workorders_count': assets_workorders_count,
         
     }
@@ -105,6 +110,7 @@ def asset(request, id):
             'priority': wo.get_priority_display(),
             'recurrence': wo.get_recurrence_display(),
             'last_record_status': wo.workorderrecord_set.order_by('-created_on').first().status if wo.workorderrecord_set.order_by('-created_on').first() else '',
+            'last_record_due_date': wo.workorderrecord_set.order_by('-created_on').first().due_date.strftime('%m-%d-%Y') if wo.workorderrecord_set.order_by('-created_on').first() else '',
             }
             workorders.append(workorder)
 
@@ -143,9 +149,12 @@ def assets(request):
     for asset in assets:
         asset.workorders_count = WorkOrder.objects.filter(asset=asset).count()
 
+    current_time = timezone.now()
+
     context = {
         'title': 'Assets',
         'assets': assets,
+        'current_time': current_time
     }
 
     return render(request, 'workorder/assets.html', context)
@@ -225,24 +234,28 @@ def delete_asset(request, id):
         messages.error(request, 'Error deleting asset')
     return redirect('workorder-assets')
 
+@login_required
 def asset_workorders_new(request, id):
     asset = Asset.objects.get(id=id)
+    print('asset', asset)
     if request.method == 'POST':
-        form = WorkOrderEditForm(request.POST, request.FILES)
+        form = AssetWorkOrderNewForm(request.POST, request.FILES)
         # add created by
         form.instance.asset = asset
         form.instance.created_by = request.user
         if form.is_valid():
             form.save()
-            return redirect('workorder-workorders')
+            # redirect to asset
+            return redirect('workorder-assets')
     else:
-        form = WorkOrderEditForm()
-        form.fields['asset'].initial = Asset
+        form = AssetWorkOrderNewForm()
+        
         # order by assigned to
         form.fields['assigned_to'].queryset = User.objects.order_by('username')
     context = {
         'title': 'Add Work Order',
         'form': form,
+        'asset': asset,
     }
     return render(request, 'workorder/new_workorder.html', context)
 

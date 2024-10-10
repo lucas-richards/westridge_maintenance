@@ -31,7 +31,7 @@
     }
   </style>
     <header class="site-header">
-      <nav class="navbar navbar-expand-md navbar-dark bg-danger fixed-top">
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top" style="background-color: #246cff;">
         <div class="container">
           <!-- add user picture if logged in -->
             {% if user.is_authenticated %}
@@ -39,16 +39,16 @@
                 <img id="profImage" src="{{user.profile.image.url}}" class="rounded-circle border" style="width: 40px; height: 40px;">
               
             {% endif %}
-        <a class="navbar-brand mr-4 ml-2 " href="{% url 'training-dashboard' %}">Testing Environment</a>
+        <a class="navbar-brand mr-4 ml-2 " href="{% url 'workorder-dashboard' %}"><strong>ID</strong> Maintain</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
               
-            <a class="nav-item nav-link" href="{% url 'training-dashboard' %}">Training</a>
+            <!-- <a class="nav-item nav-link" href="{% url 'training-dashboard' %}">Training</a> -->
             <!-- workorder link -->
-            <a class="nav-item nav-link" href="{% url 'workorder-dashboard' %}">Maintenance</a>
+            <!-- <a class="nav-item nav-link" href="{% url 'workorder-dashboard' %}">Maintenance</a> -->
             <!-- <a class="nav-item nav-link" href="{% url 'tasks-home' %}">Tasks</a> -->
             
             <!-- <div class="nav-item dropdown">

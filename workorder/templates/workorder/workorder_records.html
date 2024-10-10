@@ -108,6 +108,8 @@
                                 <p class="mr-2 text-success">On Time</p>
                             {% elif data.time_until_due > 0 %}
                                 <p class="mr-2 text-warning">Coming up</p>
+                            {% elif data.time_until_due == 0 %}
+                                <p class="mr-2 text-success">Today</p>
                             {% else %}
                                 <p class="mr-2 text-danger">Overdue</p>
                             {% endif %}
