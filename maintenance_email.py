@@ -12,6 +12,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from datetime import date
 from workorder.models import WorkOrder, WorkOrderRecord
+import datetime as dt
 
 class Command(BaseCommand):
     help = 'Send maintenance email with overdue and coming up WOs'
@@ -29,7 +30,7 @@ class Command(BaseCommand):
         for workorder in workorders:
             last_record = WorkOrderRecord.objects.filter(workorder=workorder).exclude(status__in=['done', 'cancelled']).order_by('-due_date').first()
             if last_record:
-                last_record.time_until_due = (last_record.due_date - timezone.now()).days if last_record.due_date else None
+                last_record.time_until_due = (last_record.due_date - timezone.now() + dt.timedelta(days=1)).days if last_record.due_date else None
                 if last_record.time_until_due is not None and last_record.time_until_due <= 7:
                     records.append(last_record)
         
@@ -76,6 +77,37 @@ class Command(BaseCommand):
         except Exception as e:
             logging.error(f'Error sending schedule update email to {recipients}: {str(e)}')
             print(f'Error sending schedule update email to {recipients}: {str(e)}')
+
+
+        # Check all workorders notification property and send email if the last record of the notification is not cancelled or done and due date is within the notification settings
+        workorders = WorkOrder.objects.all()
+        for workorder in workorders:
+            last_record = WorkOrderRecord.objects.filter(workorder=workorder).exclude(status__in=['done', 'cancelled']).order_by('-due_date').first()
+            if last_record and last_record.due_date:
+                if workorder.notification == 'day before' and (last_record.due_date - timezone.now()).days <= 2:
+                    self.send_notification_email(workorder, last_record)
+                elif workorder.notification == 'week before' and (last_record.due_date - timezone.now()).days <= 7:
+                    self.send_notification_email(workorder, last_record)
+                elif workorder.notification == 'month before' and (last_record.due_date - timezone.now()).days <= 30:
+                    self.send_notification_email(workorder, last_record)
+        
+    def send_notification_email(self, workorder, record):
+        email_user = os.environ.get('EMAIL_USER')
+        email_password = os.environ.get('EMAIL_PASS')
+        author_email = 'lrichards@westridgelabs.com'
+        recipients = [f'{workorder.assigned_to.email}']
+
+        subject = f'{workorder.title} is due soon'
+        message = f'''this is a reminder that the work order {workorder.title} is due on {record.due_date}'''
+        try:
+            send_mail(subject, '', email_user, recipients, html_message=message, auth_user=email_user, auth_password=email_password)
+            logging.info(f'Successfully sent reminder update email to {recipients}')
+            print(f'Successfully sent reminder update email to {recipients}')
+        except Exception as e:
+            logging.error(f'Error sending reminder update email to {recipients}: {str(e)}')
+            print(f'Error sending reminder update email to {recipients}: {str(e)}')
+        
+
 
     def get_status_badge(self, status):
         badge_styles = {

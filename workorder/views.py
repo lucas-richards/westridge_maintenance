@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 import datetime
 from users.models import User
+import datetime as dt
 
 # Create your views here.
 
@@ -179,7 +180,7 @@ def add_asset(request):
                 prefix = 'P'
             elif location == 'assembly':
                 prefix = 'A'
-            elif location == 'building':
+            elif location == 'bulding':
                 prefix = 'B'
             elif location == 'roof':
                 prefix = 'F'
@@ -187,6 +188,8 @@ def add_asset(request):
                 prefix = 'Q'
             elif location == 'scale':
                 prefix = 'SC'
+            else:
+                messages.error(request, 'Error adding asset')
             
             last_code = Asset.objects.filter(code__startswith=prefix).order_by('-code').first()
             if last_code:
@@ -354,6 +357,7 @@ def workorder(request, id):
                 'id': workorder.id,
                 'code': workorder.asset.code if workorder.asset else '',
                 'title': workorder.title,
+                'notification': workorder.notification,
                 'priority': workorder.priority,
                 'description': workorder.description,
                 'assigned_to': workorder.assigned_to.username if workorder.assigned_to else '',
@@ -365,7 +369,7 @@ def workorder(request, id):
                 'asset': workorder.asset.name if workorder.asset else '',
                 'image_url': workorder.image.url if workorder.image else '',
                 'attachments': workorder.attachments.url if workorder.attachments else '',
-                'time_until_due': (last_record.due_date - last_record.created_on).days if last_record.due_date else '',
+                'time_until_due': (last_record.due_date - timezone.now() + dt.timedelta(days=1) ).days if last_record.due_date else '',
                 'records': [{'id': record.id, 'created_on': record.created_on.strftime('%m-%d-%Y'), 'status': record.status, 'due_date': record.due_date.strftime('%m-%d-%Y'), 'completed_on': record.completed_on.strftime('%m-%d-%Y') if record.completed_on else '', 'completed_by': record.completed_by.username if record.completed_by else '', 'time_to_complete': record.time_to_complete.total_seconds() if record.time_to_complete else '', 'attachments': record.attachments.url if record.attachments else '', 'comments': record.comments} for record in records],
                 'last_record_status': last_record.status if last_record else '',
             }
@@ -441,7 +445,7 @@ def workorder_records(request):
     records = sorted(records, key=lambda x: x.status in ['cancelled', 'done'])
     # add this to each record 'time_until_due': (record.due_date - timezone.now() ).days if record.due_date else '',
     for record in records:
-        record.time_until_due = (record.due_date - timezone.now() ).days if record.due_date else ''
+        record.time_until_due = (record.due_date - timezone.now() + dt.timedelta(days=1) ).days if record.due_date else ''
         record.status = record.get_status_display()
 
     context = {

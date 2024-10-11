@@ -168,7 +168,7 @@
                                 ${data.department_in_charge ? `<p><strong>Department in Charge:</strong> ${data.department_in_charge}</p>` : ''}
                                 ${data.vendors ? `<p><strong>Vendors:</strong> ${data.vendors}</p>` : ''}
                                 ${data.criticality ? `<p><strong>Criticality:</strong> ${data.criticality}</p>` : ''}
-                                ${data.attachments ? `<p  class="truncate"><strong >Attachments:</strong><a href="${data.attachments}">${data.attachments}</a></p>` : ''}
+                                ${data.attachments ? `<p  class="truncate"><strong >Attachments:</strong><a target="_blank" href="${data.attachments}">${data.attachments}</a></p>` : ''}
                                 
                             </div>
                             <div class="col-md-3" data-toggle="modal" data-target="#exampleModal">
@@ -202,7 +202,10 @@
                                             <td>WO${ wo.id}</td>
                                             <td class="truncate">${ wo.title }</td>
                                             <td>
-                                                ${ new Date(wo.last_record_due_date).getTime() < new Date().getTime() ? `<span class="text-danger">Overdue</span>` : `<span class="text-success">On Time</span>` }
+                                                ${ wo.last_record_status !== 'done' && wo.last_record_status !== 'cancelled' ? 
+                                                 new Date(wo.last_record_due_date).getTime() + 86400000 < new Date().getTime() ? `<span class="text-danger">Overdue</span>` : `<span class="text-success">On Time</span>` 
+                                                 :''
+                                                }
                                             </td>
                                             <td class="d-flex align-items-center justify-content-center">
                                                 ${ wo.last_record_status === 'done'? `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-dot text-success" viewBox="0 0 10 10">

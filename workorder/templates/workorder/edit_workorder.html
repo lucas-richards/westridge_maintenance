@@ -93,6 +93,20 @@
     </div>
 </div>
 
+<script>
+    function validateForm() {
+        const noti = document.getElementById('id_notification').value;
+        const assigned_to = document.getElementById('id_assigned_to').value;
+    
+        if (noti === 'None' && !assigned_to) {
+            alert('Please provide a completed on date when the noti is set to "Done".');
+            return false; // Prevent form submission
+        }
+    
+        return true; // Allow form submission
+    }
+    </script>
+
 
 
 

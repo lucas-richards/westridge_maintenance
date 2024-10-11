@@ -35,6 +35,13 @@ RECURRENCE = [
     ('yearly', 'Yearly'),
 ]
 
+NOTIFICATION = [
+    ('none', 'None'),
+    ('day before', 'Day Before'),
+    ('week before', 'Week Before'),
+    ('month before', 'Month Before'),
+]
+
 # KPI models
 class KPI(models.Model):
     name = models.CharField(max_length=255)
@@ -132,6 +139,11 @@ class WorkOrder(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_workorders')
     created_on = models.DateTimeField(auto_now_add=True)
     first_due_date = models.DateTimeField(default=timezone.now)
+    notification = models.CharField(
+        max_length=20,
+        choices=NOTIFICATION,
+        default='none',
+    )
     last_updated = models.DateTimeField(auto_now=True)
     recurrence = models.CharField(
         max_length=20,
