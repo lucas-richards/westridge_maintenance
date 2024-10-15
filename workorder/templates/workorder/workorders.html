@@ -212,7 +212,7 @@
                                         <h2><strong>WO${data.id}</strong> ${data.code}</h2>
                                         <h5>${data.title}</h5>
                                         ${data.description ? `<p>${data.description.split('\n').map(line => `<span>${line}</span><br>`).join('')}</p>` : ''}
-                                        ${data.attachments ? `<p>Attachment:<a target="_blank" href="${data.attachments}"> link</a></p>` : ''}
+                                        ${data.attachments ? `<p><strong>Attachment: </strong><a target="_blank" href="${data.attachments}">link</a></p>` : ''}
                                     </div>
                                     <div class="col-md-3" data-toggle="modal" data-target="#exampleModal">
                                         ${data.image_url ? `<img src="${data.image_url}" alt="image missing">` : ''}
