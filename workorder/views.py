@@ -429,6 +429,7 @@ def edit_workorder(request, id):
 def delete_workorder(request, id):
     workorder = WorkOrder.objects.get(id=id)
     workorder.delete()
+    messages.success(request, 'Work Order deleted successfully')
     return redirect('workorder-workorders')
 
 
