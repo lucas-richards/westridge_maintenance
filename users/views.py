@@ -132,7 +132,7 @@ def login_code(request):
             messages.success(request, 'Login successful')
             del request.session['timestamp']  # Remove code_time from session after successful login
             del request.session['username']  # Remove username from session after successful login
-            return redirect('training-dashboard')
+            return redirect('workorder-dashboard')
         except:
             # Authentication failed, handle error
             messages.error(request, 'Invalid verification code')

@@ -192,7 +192,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 
-LOGIN_REDIRECT_URL = 'workorder-dashboard'
+LOGIN_REDIRECT_URL = 'workorder-assets'
 LOGIN_URL = 'get-code'
 
 #variables to send email and reset password
