@@ -4,7 +4,8 @@ from . import views
 urlpatterns = [
     path('', views.dashboard, name='workorder-dashboard'),
     path('assets/', views.assets, name='workorder-assets'),
-    path('asset/<int:id>/', views.asset, name='workorder-asset'),
+    path('asset/<int:id>/', views.asset_page, name='workorder-asset-page'), # For rendering the page
+    path('asset/<int:id>/json/', views.asset_json, name='workorder-asset-json'), # For returning JSON data
     path('asset/add/', views.add_asset, name='workorder-add-asset'),
     path('asset/edit/<int:id>/', views.edit_asset, name='workorder-edit-asset'),
     path('asset/delete/<int:id>/', views.delete_asset, name='workorder-delete-asset'),

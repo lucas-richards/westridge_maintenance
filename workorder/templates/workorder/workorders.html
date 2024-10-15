@@ -81,31 +81,9 @@
             <div class="asset">
                 <div class="d-flex justify-content-between align-items-bottom workorder-item" data-workorder-id="{{ data.workorder.id }}">
                     <div class="d-flex justify-content-center align-items-bottom">
-                        <h5 style="min-width: 90px;" class="mr-2 btn btn-sm btn-outline-primary">{{ data.recurrence }}</h5>
                         <h5 class="mr-2 font-weight-bold">WO{{ data.workorder.id }} </h5>
-                        <h5 class="truncate">{{ data.workorder.asset.code }}</h5>
+                        <p class="truncate">{{ data.workorder.title }}</p>
                     </div>
-                    <!-- green dot if status is online -->
-                    {% if data.last_record.status == 'done' %}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-dot text-success" viewBox="0 0 10 10">
-                            <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
-                        </svg>
-                    {% elif data.last_record.status == 'on_hold' %}
-                    
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-dot text-warning" viewBox="0 0 10 10">
-                            <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
-                        </svg>
-                    {% elif data.last_record.status == 'cancelled' %}
-                        
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-dot text-secondary" viewBox="0 0 10 10">
-                            <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
-                        </svg>
-                    {% else %}
-                    
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-dot text-info" viewBox="0 0 10 10">
-                            <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/>
-                        </svg>
-                    {% endif %}
                     
                 </div>
             </div>
@@ -233,7 +211,7 @@
                                     <div class="col-md-7">
                                         <h2><strong>WO${data.id}</strong> ${data.code}</h2>
                                         <h5>${data.title}</h5>
-                                        <p>${data.description.split('\n').map(line => `<span>${line}</span><br>`).join('')}</p>
+                                        ${data.description ? `<p>${data.description.split('\n').map(line => `<span>${line}</span><br>`).join('')}</p>` : ''}
                                         ${data.attachments ? `<p>Attachment:<a target="_blank" href="${data.attachments}"> link</a></p>` : ''}
                                     </div>
                                     <div class="col-md-3" data-toggle="modal" data-target="#exampleModal">

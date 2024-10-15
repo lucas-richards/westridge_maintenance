@@ -99,7 +99,7 @@ def dashboard(request):
 
 @csrf_exempt
 @require_http_methods(["GET", "PUT"])
-def asset(request, id):
+def asset_json(request, id):
     try:
         asset = Asset.objects.get(id=id)
         workorders_all = WorkOrder.objects.filter(asset=asset)
@@ -143,6 +143,14 @@ def asset(request, id):
         return JsonResponse({'error': 'Asset not found'}, status=404)
     except ( Asset.DoesNotExist, Department.DoesNotExist, Vendor.DoesNotExist):
         return JsonResponse({'error': 'Related entity not found'}, status=404)
+
+def asset_page(request, id):
+    # This is the view that renders the full page
+    try:
+        asset = Asset.objects.get(id=id)
+        return redirect('workorder-assets')
+    except Asset.DoesNotExist:
+        return render(request, '404.html', status=404)
 
 def assets(request):
     assets = Asset.objects.all().order_by('code')

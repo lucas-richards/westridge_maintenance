@@ -131,9 +131,9 @@
             assetDetailsDiv.innerHTML = '<h5>Select an asset to see details</h5>';
         }
     });
-
+// this
     function loadAssetDetails(assetId) {
-        fetch(`/maintenance/asset/${assetId}/`)
+        fetch(`/maintenance/asset/${assetId}/json/`)
             .then(response => response.json())
             .then(data => {
                 assetDetailsDiv.innerHTML = `

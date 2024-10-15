@@ -33,7 +33,7 @@ class WorkOrderEditForm(forms.ModelForm):
 class AssetWorkOrderNewForm(forms.ModelForm):
     class Meta:
         model = WorkOrder
-        fields = ['recurrence','first_due_date','title','assigned_to', 'department_assigned_to','image','description', 'priority', 'attachments', ]
+        fields = ['recurrence','first_due_date','title','assigned_to','notification', 'department_assigned_to','image','description', 'priority', 'attachments', ]
         widgets = {
             'priority': forms.Select(choices=CRITICALITY_CHOICES),
             'first_due_date': forms.DateInput(attrs={'type': 'date'}),
