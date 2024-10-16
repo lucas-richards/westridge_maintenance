@@ -79,6 +79,8 @@ def dashboard(request):
     overdue_kpi = KPIValue.objects.filter(kpi__name='Overdue', date__gte=timezone.now() - datetime.timedelta(days=30)).order_by('date')
     overdue_kpi_values = [value.value for value in overdue_kpi]
     overdue_kpi_dates = [value.date.strftime('%m-%d-%Y') for value in overdue_kpi]
+    print('overdue_kpi_values', overdue_kpi_values)
+    print('overdue_kpi_dates', overdue_kpi_dates)
 
 
     context = {

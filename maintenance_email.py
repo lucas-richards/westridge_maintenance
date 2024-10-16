@@ -21,7 +21,7 @@ class Command(BaseCommand):
         email_user = os.environ.get('EMAIL_USER')
         email_password = os.environ.get('EMAIL_PASS')
         author_email = 'lrichards@westridgelabs.com'
-        recipients = ['lrichards@westridgelabs.com' ]
+        recipients = ['lrichards@westridgelabs.com','ibeza@westridgelabs.com' ]
 
         subject = 'Due Maintenance Work Orders'
         workorders = WorkOrder.objects.all()
