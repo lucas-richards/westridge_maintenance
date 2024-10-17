@@ -199,5 +199,26 @@ class WorkOrderRecord(models.Model):
             else:
                 kpi_value.value = value
             kpi_value.save()
+
+class CheckListItem(models.Model):
+    workorder_record = models.ForeignKey(WorkOrderRecord, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    status = models.CharField(
+        max_length=6,
+        choices=[
+            ('pass', 'Pass'),
+            ('fail', 'Fail'),
+            ('flag', 'Flag'),
+        ],
+    )
+    due_date = models.DateTimeField(default=timezone.now)
+    attachments = models.FileField(upload_to=f'records', null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
             
             

@@ -92,20 +92,21 @@ class Command(BaseCommand):
                     self.send_notification_email(workorder, last_record)
         
     def send_notification_email(self, workorder, record):
-        email_user = os.environ.get('EMAIL_USER')
-        email_password = os.environ.get('EMAIL_PASS')
-        author_email = 'lrichards@westridgelabs.com'
-        recipients = [f'{workorder.assigned_to.email}']
+        if workorder.assigned_to and workorder.assigned_to.email:
+            email_user = os.environ.get('EMAIL_USER')
+            email_password = os.environ.get('EMAIL_PASS')
+            author_email = 'lrichards@westridgelabs.com'
+            recipients = [f'{workorder.assigned_to.email}']
 
-        subject = f'{workorder.title} is due soon'
-        message = f'''this is a reminder that the work order {workorder.title} is due on {record.due_date}'''
-        try:
-            send_mail(subject, '', email_user, recipients, html_message=message, auth_user=email_user, auth_password=email_password)
-            logging.info(f'Successfully sent reminder update email to {recipients}')
-            print(f'Successfully sent reminder update email to {recipients}')
-        except Exception as e:
-            logging.error(f'Error sending reminder update email to {recipients}: {str(e)}')
-            print(f'Error sending reminder update email to {recipients}: {str(e)}')
+            subject = f'{workorder.title} is due soon'
+            message = f'''This is a reminder that the work order {workorder.title} is due on {record.due_date}.'''
+            try:
+                send_mail(subject, '', email_user, recipients, html_message=message, auth_user=email_user, auth_password=email_password)
+                logging.info(f'Successfully sent reminder update email to {recipients}')
+                print(f'Successfully sent reminder update email to {recipients}')
+            except Exception as e:
+                logging.error(f'Error sending reminder update email to {recipients}: {str(e)}')
+                print(f'Error sending reminder update email to {recipients}: {str(e)}')
         
 
 
