@@ -26,13 +26,13 @@ STATUS2 = [
     ]
 
 RECURRENCE = [
-    ('once', 'Once'),
-    ('daily', 'Daily'),
-    ('weekly', 'Weekly'),
-    ('monthly', 'Monthly'),
-    ('quarterly', 'Quarterly'),
-    ('biannually', 'Biannually'),
-    ('yearly', 'Yearly'),
+    ('Once', 'Once'),
+    ('Daily', 'Daily'),
+    ('Weekly', 'Weekly'),
+    ('Monthly', 'Monthly'),
+    ('Quarterly', 'Quarterly'),
+    ('Biannually', 'Biannually'),
+    ('Yearly', 'Yearly'),
 ]
 
 NOTIFICATION = [

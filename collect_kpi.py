@@ -134,7 +134,7 @@ class Command(BaseCommand):
             if last_work_order_record:
                 print('last_work_order_record:', last_work_order_record, work_order.recurrence)
                 if last_work_order_record.status in ['done', 'cancelled']:
-                    if work_order.recurrence == 'daily':
+                    if work_order.recurrence == 'Daily':
                         new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=1))
                         print('new:', new)
                     elif work_order.recurrence == 'Weekly':
