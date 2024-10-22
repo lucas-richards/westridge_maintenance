@@ -158,7 +158,7 @@
                             <div class="col-md-8">
                                 <h5><strong>${data.code}</strong>  ${data.name}</h5>
                                 <strong>Description:</strong>
-                                <p  style="height: 100px; overflow-y: scroll;">${data.description.split('\n').map(line => `<span>${line}</span><br>`).join('')}</p>
+                                ${data.description ? `<p style="height: 100px; overflow-y: scroll;">${data.description.split('\n').map(line => `<span>${line}</span><br>`).join('')}</p>` : ''}
                                 ${data.status ? `<p><strong>Status:</strong> <span class="badge ${data.status === 'online' ? 'badge-success' : 'badge-danger'}">${data.status}</span></p>` : ''}
                                 ${data.serial_number ? `<p><strong>Serial Number:</strong> ${data.serial_number}</p>` : ''}
                                 ${data.model ? `<p><strong>Model:</strong> ${data.model}</p>` : ''}
