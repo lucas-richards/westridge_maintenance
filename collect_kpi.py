@@ -124,7 +124,7 @@ class Command(BaseCommand):
         
         self.stdout.write(self.style.SUCCESS('Successfully saved daily training KPI values'))
 
-        
+
         
         # Maintenance APP
         # schedule a work order record according to the recurrence and if the last work order record is done or cancelled

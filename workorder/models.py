@@ -148,7 +148,7 @@ class WorkOrder(models.Model):
     recurrence = models.CharField(
         max_length=20,
         choices=RECURRENCE,
-        default='once',
+        default='Once',
     )
     asset = models.ForeignKey(Asset, on_delete=models.SET_NULL, null=True, blank=True)
     image = models.ImageField(upload_to='wo_images/', null=True, blank=True)

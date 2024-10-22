@@ -242,7 +242,8 @@
                                 </div>
                                 <div class="modal-body">
                                     <p><strong>Title:</strong> ${data.workorder_title}</p>
-                                    <p><strong>Description:</strong> ${data.workorder_description}</p>
+                                    <strong>Description:</strong>
+                                    ${data.workorder_description ? `<p style="height: 200px; overflow-y: scroll;">${data.workorder_description.split('\n').map(line => `<span>${line}</span><br>`).join('')}</p>` : ''}
                                 </div>
                                 </div>
                             </div>
