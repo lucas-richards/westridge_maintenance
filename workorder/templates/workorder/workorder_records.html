@@ -213,22 +213,22 @@
                                         <label for="completed_on">Completed On:</label>
                                         <input type="date" class="form-control" id="completed_on" name="completed_on" value="${data.completed_on}">
                                     </div>
-
-                                    <div class="card p-3 mb-3">
-                                        ${data.checklist_items ? data.checklist_items.map(item => `
-                                            <div class="form-group row">
-                                                <label for="checklist_item_${item.id}" class="col-sm-8 col-form-label">${item.title}</label>
-                                                <div class="col-sm-4">
-                                                    <select class="form-control text-${item.status === 'pass'? 'success': item.status === 'fail'? 'danger':item.status === 'flag'? 'warning':''}" id="checklist_item_${item.id}" name="checklist_item_${item.id}" onchange="updateSelectColor(this)">
-                                                        <option value="">Select</option>
-                                                        <option value="pass" ${item.status === 'pass' ? 'selected': ''}>Pass</option>
-                                                        <option value="fail" ${item.status === 'fail' ? 'selected': ''}>Fail</option>
-                                                        <option value="flag" ${item.status === 'flag' ? 'selected': ''}>Flag</option>
-                                                    </select>
-                                                </div>
+                                    
+                                        
+                                    ${data.checklist_items && data.checklist_items.length > 0 ? `<div class="card p-3 mb-3"> ${data.checklist_items.map(item => `
+                                        <div class="form-group row">
+                                            <label for="checklist_item_${item.id}" class="col-sm-8 col-form-label">${item.title}</label>
+                                            <div class="col-sm-4">
+                                                <select class="form-control text-${item.status === 'pass' ? 'success' : item.status === 'fail' ? 'danger' : item.status === 'flag' ? 'warning' : ''}" id="checklist_item_${item.id}" name="checklist_item_${item.id}" onchange="updateSelectColor(this)">
+                                                    <option value="">Select</option>
+                                                    <option value="pass" ${item.status === 'pass' ? 'selected' : ''}>Pass</option>
+                                                    <option value="fail" ${item.status === 'fail' ? 'selected' : ''}>Fail</option>
+                                                    <option value="flag" ${item.status === 'flag' ? 'selected' : ''}>Flag</option>
+                                                </select>
                                             </div>
-                                        `).join('') : ''}
-                                    </div>
+                                        </div>
+                                    `).join('')}</div>` : ''}
+                                        
 
                                     
                                     <div class="form-group">
