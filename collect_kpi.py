@@ -135,19 +135,28 @@ class Command(BaseCommand):
                 print('last_work_order_record:', last_work_order_record, work_order.recurrence)
                 if last_work_order_record.status in ['done', 'cancelled']:
                     if work_order.recurrence == 'Daily':
-                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=1))
-                        print('new:', new)
+                        new = WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now() + dt.timedelta(days=1))
                     elif work_order.recurrence == 'Weekly':
-                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=7))
-                        print('new:', new)
+                        new = WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now() + dt.timedelta(days=7))
                     elif work_order.recurrence == 'Monthly':
-                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=30))
+                        new = WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now() + dt.timedelta(days=30))
                     elif work_order.recurrence == 'Quarterly':
-                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=90))
+                        new = WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now() + dt.timedelta(days=90))
                     elif work_order.recurrence == 'Biannually':
-                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=180))
+                        new = WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now() + dt.timedelta(days=180))
                     elif work_order.recurrence == 'Yearly':
-                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=365))
+                        new = WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now() + dt.timedelta(days=365))
+                    
+                    if last_work_order_record.checklist_items.exists():
+                        for item in last_work_order_record.checklist_items.all():
+                            item_data = {
+                                'work_order_record': new,
+                                'name': item.name,
+                                'description': item.description,
+                                'status': '',  # Set the status to empty
+                                # Add any other fields that need to be copied
+                            }
+                            new_checklist = CheckListItem.objects.create(**item_data)
 
             else:
                 WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now())

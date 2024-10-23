@@ -213,6 +213,23 @@
                                         <label for="completed_on">Completed On:</label>
                                         <input type="date" class="form-control" id="completed_on" name="completed_on" value="${data.completed_on}">
                                     </div>
+
+                                    <div class="card p-3 mb-3">
+                                        ${data.checklist_items ? data.checklist_items.map(item => `
+                                            <div class="form-group row">
+                                                <label for="checklist_item_${item.id}" class="col-sm-8 col-form-label">${item.title}</label>
+                                                <div class="col-sm-4">
+                                                    <select class="form-control text-${item.status === 'pass'? 'success': item.status === 'fail'? 'danger':item.status === 'flag'? 'warning':''}" id="checklist_item_${item.id}" name="checklist_item_${item.id}" onchange="updateSelectColor(this)">
+                                                        <option value="">Select</option>
+                                                        <option value="pass" ${item.status === 'pass' ? 'selected': ''}>Pass</option>
+                                                        <option value="fail" ${item.status === 'fail' ? 'selected': ''}>Fail</option>
+                                                        <option value="flag" ${item.status === 'flag' ? 'selected': ''}>Flag</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        `).join('') : ''}
+                                    </div>
+
                                     
                                     <div class="form-group">
                                         <label for="attachment">Attachment:</label>
@@ -244,7 +261,7 @@
                                     <p><strong>Title:</strong> ${data.workorder_title}</p>
                                     <strong>Description:</strong>
                                     ${data.workorder_description ? `<p style="height: 200px; overflow-y: scroll;">${data.workorder_description.split('\n').map(line => `<span>${line}</span><br>`).join('')}</p>` : ''}
-                                </div>
+                                   
                                 </div>
                             </div>
                             </div>
@@ -276,15 +293,27 @@
     function validateForm() {
         const status = document.getElementById('status').value;
         const completedOn = document.getElementById('completed_on').value;
-    
+        let allChecklistItemsSelected = true;
+
+        document.querySelectorAll('select[id^="checklist_item_"]').forEach(selectElement => {
+            if (!selectElement.value) {
+                allChecklistItemsSelected = false;
+            }
+        });
+
         if (status === 'done' && !completedOn) {
             alert('Please provide a completed on date when the status is set to "Done".');
             return false; // Prevent form submission
         }
-    
+
+        if (!allChecklistItemsSelected) {
+            alert('Please select a status for all checklist items.');
+            return false; // Prevent form submission
+        }
+
         return true; // Allow form submission
     }
-    </script>
+</script>
 <script>
     function filterassets() {
     var input = document.getElementById("searchBox");
@@ -312,7 +341,25 @@
     }
 }
 </script>
+<script>
+    function updateSelectColor(selectElement) {
+        const value = selectElement.value;
+        selectElement.classList.remove('border-success', 'border-danger', 'border-warning', 'text-success', 'text-danger', 'text-warning');
+        
+        if (value === 'pass') {
+            selectElement.classList.add('border-success', 'text-success');
+        } else if (value === 'fail') {
+            selectElement.classList.add('border-danger', 'text-danger');
+        } else if (value === 'flag') {
+            selectElement.classList.add('border-warning', 'text-warning');
+        }
+    }
 
+    // Initialize colors on page load
+    document.querySelectorAll('select[id^="checklist_item_"]').forEach(selectElement => {
+        updateSelectColor(selectElement);
+    });
+</script>
 
 
 {% endblock content %}

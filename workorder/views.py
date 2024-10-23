@@ -473,6 +473,8 @@ def workorder_records(request):
 def workorder_record(request, id):
     try:
         record = WorkOrderRecord.objects.get(id=id)
+        checklist_items = record.checklistitem_set.all()
+
         
         data = {
                 'id': record.id,
@@ -487,18 +489,19 @@ def workorder_record(request, id):
                 'attachments': record.attachments.url if record.attachments else '',
                 'comments': record.comments if record.comments else '',
                 'time_until_due': (record.due_date - timezone.now()- datetime.timedelta(days=1) ).days if record.due_date else '',
-        }        
+                'checklist_items': [{'id': item.id, 'title': item.title, 'description': item.description, 'status': item.status, 'due_date': item.due_date.strftime('%m-%d-%Y') if item.due_date else '', 'attachments': item.attachments.url if item.attachments else '', 'notes': item.notes} for item in checklist_items],
+        }     
+
         status = request.POST.get('status')
-        print('request.FILES',request.FILES)
+
         if request.method == "POST":
             if status:
-                print(request)
+                print('workorder recor',request.POST)
                 # get user
                 user = User.objects.get(username=request.user)
                 record.completed_by = user
                 record.status = status
                 completed_on = request.POST.get('completed_on')
-                print(completed_on)
                 if completed_on:
                     # Convert string to a timezone-aware datetime
                     record.completed_on = timezone.make_aware(
@@ -507,8 +510,14 @@ def workorder_record(request, id):
                 # Handle file upload
                 if 'attachments' in request.FILES:
                     record.attachments = request.FILES['attachments']
-                    print('attachments', record.attachments)
                 record.comments = request.POST.get('comments')
+                for item in checklist_items:
+                    item_status = request.POST.get(f'checklist_item_{item.id}')
+                    if item_status:
+                        item.status = item_status
+                        item.notes = request.POST.get(f'checklist_item_{item.id}_notes', '')
+                        print('item', item)
+                        item.save()
                 record.save()
                 messages.success(request, 'Record updated successfully')
                 return redirect('workorder-workorder-records')

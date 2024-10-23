@@ -211,7 +211,9 @@ class CheckListItem(models.Model):
             ('fail', 'Fail'),
             ('flag', 'Flag'),
         ],
-    )
+        null=True,
+        blank=True,
+        )
     due_date = models.DateTimeField(default=timezone.now)
     attachments = models.FileField(upload_to=f'records', null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
