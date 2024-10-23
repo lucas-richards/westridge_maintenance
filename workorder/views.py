@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Asset, Vendor, WorkOrder, WorkOrderRecord, KPI, KPIValue
+from .models import Asset, Vendor, WorkOrder, WorkOrderRecord, KPI, KPIValue, CheckListItem
 from users.models import Department
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -473,7 +473,7 @@ def workorder_records(request):
 def workorder_record(request, id):
     try:
         record = WorkOrderRecord.objects.get(id=id)
-        checklist_items = record.checklistitem_set.all()
+        checklist_items = CheckListItem.objects.filter(workorder_record=record)
 
         
         data = {

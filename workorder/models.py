@@ -201,7 +201,7 @@ class WorkOrderRecord(models.Model):
             kpi_value.save()
 
 class CheckListItem(models.Model):
-    workorder_record = models.ForeignKey(WorkOrderRecord, on_delete=models.CASCADE)
+    workorder_record = models.ForeignKey(WorkOrderRecord, on_delete=models.CASCADE, related_name='checklist_items')
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     status = models.CharField(

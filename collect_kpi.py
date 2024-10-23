@@ -10,7 +10,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from datetime import date
 from training.models import KPI, KPIValue, Profile, TrainingEvent, TrainingModule, ProfileTrainingEvents
-from workorder.models import WorkOrder, WorkOrderRecord, KPI as KPI2, KPIValue as KPIValue2
+from workorder.models import WorkOrder, WorkOrderRecord, KPI as KPI2, KPIValue as KPIValue2, CheckListItem
 import datetime as dt
 
 class Command(BaseCommand):
@@ -135,28 +135,30 @@ class Command(BaseCommand):
                 print('last_work_order_record:', last_work_order_record, work_order.recurrence)
                 if last_work_order_record.status in ['done', 'cancelled']:
                     if work_order.recurrence == 'Daily':
-                        new = WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now() + dt.timedelta(days=1))
+                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=1))
                     elif work_order.recurrence == 'Weekly':
-                        new = WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now() + dt.timedelta(days=7))
+                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=7))
                     elif work_order.recurrence == 'Monthly':
-                        new = WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now() + dt.timedelta(days=30))
+                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=30))
                     elif work_order.recurrence == 'Quarterly':
-                        new = WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now() + dt.timedelta(days=90))
+                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=90))
                     elif work_order.recurrence == 'Biannually':
-                        new = WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now() + dt.timedelta(days=180))
+                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=180))
                     elif work_order.recurrence == 'Yearly':
-                        new = WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now() + dt.timedelta(days=365))
+                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=365))
                     
                     if last_work_order_record.checklist_items.exists():
                         for item in last_work_order_record.checklist_items.all():
                             item_data = {
-                                'work_order_record': new,
-                                'name': item.name,
+                                'workorder_record': new,
+                                'title': item.title,
                                 'description': item.description,
                                 'status': '',  # Set the status to empty
                                 # Add any other fields that need to be copied
                             }
                             new_checklist = CheckListItem.objects.create(**item_data)
+                            print('new_checklist:', new_checklist)
+                            print('new record:', new)
 
             else:
                 WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now())
