@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from PIL import Image
 from django.utils import timezone
 from users.models import Department, User
+import datetime as dt
 
 CRITICALITY_CHOICES = [
         ('low', 'Low'),
@@ -190,15 +191,29 @@ class WorkOrderRecord(models.Model):
         super(WorkOrderRecord, self).save(*args, **kwargs)
         if self.status == 'done':
             kpi = KPI.objects.get(name='Productivity')
+            kpi_overdue = KPI.objects.get(name='Overdue')
             today = timezone.now().date()
             value = WorkOrderRecord.objects.filter(status='done', completed_on__date=today).count()
-            print('value:', value)
+            work_orders = WorkOrder.objects.all()
+            overdue = 0
+            for work_order in work_orders:
+                last_work_order_record = work_order.workorderrecord_set.last()
+                if last_work_order_record and last_work_order_record.status not in ['done', 'cancelled'] and last_work_order_record.due_date < timezone.now() + dt.timedelta(days=1):
+                    overdue += 1
+            print('overdue:', overdue)
+            print('productivity:', value)
             kpi_value = KPIValue.objects.filter(kpi=kpi, date=today).first()
+            kpi_overdue_value = KPIValue.objects.filter(kpi=kpi_overdue, date=today).first()
+            if not kpi_overdue_value:
+                kpi_overdue_value = KPIValue.objects.create(kpi=kpi_overdue, date=today, value=overdue)
+            else:
+                kpi_overdue_value.value = overdue
             if not kpi_value:
                 kpi_value = KPIValue.objects.create(kpi=kpi, date=today, value=value)
             else:
                 kpi_value.value = value
             kpi_value.save()
+            kpi_overdue_value.save()
 
 class CheckListItem(models.Model):
     workorder_record = models.ForeignKey(WorkOrderRecord, on_delete=models.CASCADE, related_name='checklist_items')

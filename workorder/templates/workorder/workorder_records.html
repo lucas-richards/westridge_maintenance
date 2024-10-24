@@ -306,7 +306,7 @@
             return false; // Prevent form submission
         }
 
-        if (!allChecklistItemsSelected) {
+        if (status === 'done' && !allChecklistItemsSelected) {
             alert('Please select a status for all checklist items.');
             return false; // Prevent form submission
         }

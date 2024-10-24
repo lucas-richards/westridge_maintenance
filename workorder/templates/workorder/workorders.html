@@ -222,7 +222,6 @@
                                
                                 <h4 class="mt-2 mr-2">Records History</h4>
                                     
-                                
                                 <table class="table table-hover" id="records-table">
                                     <thead>
                                         <tr>
@@ -277,13 +276,17 @@
                             loadMoreBtn.addEventListener('click', function () {
                                 const tbody = recordsTable.querySelector('tbody');
                                 const remainingRecords = data.records.slice(1).map(record => 
-                                    `<tr>
+                                    `
+                                    <tr>
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                                         <td>#${record.id}</td>
                                         <td>${record.due_date}</td>
                                         <td>${record.completed_by}</td>
                                         <td>${record.completed_on ? record.completed_on : 'missing'}</td>
                                         <td><span class="badge badge-${record.status === 'done' ? 'success' : record.status === 'on_hold' ? 'warning' : record.status === 'cancelled' ? 'secondary' : 'info'}">${record.status}</span></td>
-                                    </tr>`).join('');
+                                        </button>
+                                    </tr>
+                                    `).join('');
                                 tbody.insertAdjacentHTML('beforeend', remainingRecords);
                                 loadMoreBtn.style.display = 'none';
                             });

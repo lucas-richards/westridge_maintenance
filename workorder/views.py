@@ -473,7 +473,7 @@ def workorder_records(request):
 def workorder_record(request, id):
     try:
         record = WorkOrderRecord.objects.get(id=id)
-        checklist_items = CheckListItem.objects.filter(workorder_record=record)
+        checklist_items = CheckListItem.objects.filter(workorder_record=record).order_by('created_on')
 
         
         data = {
