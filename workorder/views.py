@@ -380,7 +380,32 @@ def workorder(request, id):
                 'image_url': workorder.image.url if workorder.image else '',
                 'attachments': workorder.attachments.url if workorder.attachments else '',
                 'time_until_due': (last_record.due_date - timezone.now() + dt.timedelta(days=1) ).days if last_record.due_date else '',
-                'records': [{'id': record.id, 'created_on': record.created_on.strftime('%m-%d-%Y'), 'status': record.status, 'due_date': record.due_date.strftime('%m-%d-%Y'), 'completed_on': record.completed_on.strftime('%m-%d-%Y') if record.completed_on else '', 'completed_by': record.completed_by.username if record.completed_by else '', 'time_to_complete': record.time_to_complete.total_seconds() if record.time_to_complete else '', 'attachments': record.attachments.url if record.attachments else '', 'comments': record.comments} for record in records],
+                'records': [
+                            {
+                                'id': record.id, 
+                                'created_on': record.created_on.strftime('%m-%d-%Y'), 
+                                'status': record.status, 
+                                'due_date': record.due_date.strftime('%m-%d-%Y') if record.due_date else '', 
+                                'completed_on': record.completed_on.strftime('%m-%d-%Y') if record.completed_on else '', 
+                                'completed_by': record.completed_by.username if record.completed_by else '', 
+                                'time_to_complete': record.time_to_complete.total_seconds() if record.time_to_complete else '', 
+                                'attachments': record.attachments.url if record.attachments else '', 
+                                'comments': record.comments,
+                                'checklist_items': [
+                                    {
+                                        'id': item.id, 
+                                        'title': item.title, 
+                                        'description': item.description, 
+                                        'status': item.status, 
+                                        'due_date': item.due_date.strftime('%m-%d-%Y') if item.due_date else '', 
+                                        'attachments': item.attachments.url if item.attachments else '', 
+                                        'notes': item.notes
+                                    }
+                                    for item in CheckListItem.objects.filter(workorder_record=record).order_by('created_on')
+                                ]
+                            } 
+                            for record in records
+                        ],
                 'last_record_status': last_record.status if last_record else '',
             }
             return JsonResponse(data)

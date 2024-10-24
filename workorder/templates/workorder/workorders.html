@@ -245,23 +245,7 @@
                                 </table>
                                 ${data.records.length > 1 ? '<button id="load-more" class="btn btn-link">Show More</button>' : ''}
                             </div>
-                            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                                <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Work Order Image</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="col-md-3"   data-toggle="modal" data-target="#exampleModal">
-                                        <img src="${data.image_url}" style="width:400px;" alt="asset image">
-                                    </div>
-                                </div>
-                            </div>
-                            </div>
-                        </div>
+                            
                         `;
 
                         const recordsTable = document.getElementById('records-table');
@@ -277,15 +261,46 @@
                                 const tbody = recordsTable.querySelector('tbody');
                                 const remainingRecords = data.records.slice(1).map(record => 
                                     `
-                                    <tr>
-                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                    <tr type="button" data-toggle="modal" data-target="#rec-${record.id}">
                                         <td>#${record.id}</td>
                                         <td>${record.due_date}</td>
                                         <td>${record.completed_by}</td>
                                         <td>${record.completed_on ? record.completed_on : 'missing'}</td>
                                         <td><span class="badge badge-${record.status === 'done' ? 'success' : record.status === 'on_hold' ? 'warning' : record.status === 'cancelled' ? 'secondary' : 'info'}">${record.status}</span></td>
-                                        </button>
                                     </tr>
+                                    <div class="modal fade" id="rec-${record.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">#${record.id} Details</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Due Date:</strong> ${record.due_date}</p>
+                                                    <p><strong>Completed By:</strong> ${record.completed_by}</p>
+                                                    <p><strong>Completed Date:</strong> ${record.completed_on ? record.completed_on : 'missing'}</p>
+                                                    <p><strong>Status:</strong> <span class="badge badge-${record.status === 'done' ? 'success' : record.status === 'on_hold' ? 'warning' : record.status === 'cancelled' ? 'secondary' : 'info'}">${record.status}</span></p>
+                                                    
+                                                    ${record.attachments ? `<p><strong>Attachment: </strong><a target="_blank" href="${record.attachments}">link</a></p>` : ''}
+                                                    
+                                                    ${record.comments ? `<p><strong>Comments:</strong> ${record.comments}</p>` : ''}
+                                                    ${record.checklist_items && record.checklist_items.length > 0 ? `
+                                                        <p><strong>Checklist Items:</strong></p>
+                                                        <div class="row">
+                                                            ${record.checklist_items.map(item => `
+                                                                <div class="col-md-8">${item.title}</div>
+                                                                <div class="col-md-4" style="color: ${item.status === 'pass' ? 'green' : item.status === 'fail' ? 'red' : 'orange'};">
+                                                                    ${item.status}
+                                                                </div>
+                                                            `).join('')}
+                                                        </div>
+                                                    ` : ''}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     `).join('');
                                 tbody.insertAdjacentHTML('beforeend', remainingRecords);
                                 loadMoreBtn.style.display = 'none';
