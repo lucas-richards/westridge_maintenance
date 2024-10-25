@@ -99,7 +99,14 @@ class Command(BaseCommand):
             recipients = [f'{workorder.assigned_to.email}']
 
             subject = f'{workorder.title} is due soon'
-            message = f'''This is a reminder that the work order {workorder.title} is due on {record.due_date}.'''
+            message = f'''
+            <div style="padding: 16px; border: 1px solid #ddd; border-radius: 4px;">
+                <h3 style="color: #007bff;">Reminder: Work Order Due Soon</h3>
+                <p style="font-size: 16px;">This is a reminder that the work order <strong>{workorder.title}</strong> is due on <strong>{record.due_date.date()}</strong>.</p>
+                <p style="font-size: 14px;">Please ensure that the necessary actions are taken before the due date.</p>
+                <p style="font-size: 14px;">Thank you.</p>
+            </div>
+            '''
             try:
                 send_mail(subject, '', email_user, recipients, html_message=message, auth_user=email_user, auth_password=email_password)
                 logging.info(f'Successfully sent reminder update email to {recipients}')
