@@ -217,7 +217,11 @@
                 y: {
                     beginAtZero: true,
                     min: 0,
-                    max: 20,
+                    max: function() {
+                        const maxOverdue = Math.max(...{{ overdue_kpi_values|safe }});
+                        const maxCompleted = Math.max(...{{ productivity_kpi_values|safe }});
+                        return Math.max(maxOverdue, maxCompleted) + 5;
+                    }(),
                     stacked: true,
                 }
             },
