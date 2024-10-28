@@ -213,6 +213,15 @@
                                         <h5>${data.title}</h5>
                                         ${data.description ? `<p style="height: 200px; overflow-y: scroll;">${data.description.split('\n').map(line => `<span>${line}</span><br>`).join('')}</p>` : ''}
                                         ${data.attachments ? `<p><strong>Attachment: </strong><a target="_blank" href="${data.attachments}">link</a></p>` : ''}
+                                        
+                                        ${data.last_record_checklist_items ? `
+                                            <p><strong>Checklist Items:</strong></p>
+                                            <div class="row">
+                                                ${data.last_record_checklist_items.map(item => `
+                                                    <small class="ml-2 col-md-8">${item.title}</small>
+                                                `).join('')}
+                                            </div>
+                                        ` : ''}
                                     </div>
                                     <div class="col-md-3" data-toggle="modal" data-target="#exampleModal">
                                         ${data.image_url ? `<img src="${data.image_url}" alt="image missing">` : ''}

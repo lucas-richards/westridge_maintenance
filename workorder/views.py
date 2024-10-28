@@ -407,7 +407,20 @@ def workorder(request, id):
                             for record in records
                         ],
                 'last_record_status': last_record.status if last_record else '',
+                'last_record_checklist_items': [
+                    {
+                        'id': item.id, 
+                        'title': item.title, 
+                        'description': item.description, 
+                        'status': item.status, 
+                        'due_date': item.due_date.strftime('%m-%d-%Y') if item.due_date else '', 
+                        'attachments': item.attachments.url if item.attachments else '', 
+                        'notes': item.notes
+                    }
+                    for item in CheckListItem.objects.filter(workorder_record=last_record).order_by('created_on')
+                ],
             }
+            print('data', data.get('last_record_checklist_items'))
             return JsonResponse(data)
     except WorkOrder.DoesNotExist:
         return JsonResponse({'error': 'workorder not found'}, status=404)
