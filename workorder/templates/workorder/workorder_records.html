@@ -83,6 +83,7 @@
                     <div class="d-flex justify-content-center align-items-baseline">
                         <p style="min-width: 70px;"><strong>WO{{ data.workorder.id }}</strong> </p>
                         <small style="min-width: 50px" class="mr-2 truncate">#{{ data.id }}</small>
+                        <p style="min-width: 200px; display: none;" class="mr-2 truncate asset">{{ data.workorder.asset }}</p>
                         <p style="min-width: 200px;" class="mr-2 truncate title">{{ data.workorder.title }}</p>
                         <!-- green dot if status is online  -->
                         {% if data.status == 'Done' %}
@@ -400,6 +401,7 @@
                 <thead>
                     <tr>
                         <th>Workorder ID</th>
+                        <th>Asset</th>
                         <th>Title</th>
                         <th>Status</th>
                         <th>Due Date</th>
@@ -413,6 +415,7 @@
         overdueRecords.forEach(record => {
             const workorderItem = record.closest('.workorder-item');
             const workorderId = workorderItem.querySelector('p strong').innerText;
+            const workorderAsset = workorderItem.querySelector('.asset').innerText;
             const title = workorderItem.querySelector('.title').innerText;
             const status = workorderItem.querySelector('.badge').innerText;
             const dueDate = record.innerText;
@@ -422,6 +425,7 @@
             printContent += `
                 <tr>
                     <td>${workorderId}</td>
+                    <td>${workorderAsset}</td>
                     <td>${title}</td>
                     <td>${status}</td>
                     <td>${dueDate}</td>
@@ -439,6 +443,7 @@
                 <thead>
                     <tr>
                         <th>Workorder ID</th>
+                        <th>Asset</th>
                         <th>Title</th>
                         <th>Status</th>
                         <th>Due Date</th>
@@ -452,6 +457,7 @@
         comingUpRecords.forEach(record => {
             const workorderItem = record.closest('.workorder-item');
             const workorderId = workorderItem.querySelector('p strong').innerText;
+            const workorderAsset = workorderItem.querySelector('.asset').innerText;
             const title = workorderItem.querySelector('.title').innerText;
             const status = workorderItem.querySelector('.badge').innerText;
             const dueDate = record.innerText;
@@ -461,6 +467,7 @@
             printContent += `
                 <tr>
                     <td>${workorderId}</td>
+                    <td>${workorderAsset}</td>
                     <td>${title}</td>
                     <td>${status}</td>
                     <td>${dueDate}</td>
