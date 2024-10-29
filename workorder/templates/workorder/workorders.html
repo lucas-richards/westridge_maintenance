@@ -231,7 +231,7 @@
                                
                                 <h4 class="mt-2 mr-2">Records History</h4>
                                     
-                                <table class="table table-hover" id="records-table">
+                                <table class="table table-hover text-center" id="records-table" style="font-size: 0.9em;">
                                     <thead>
                                         <tr>
                                             <th>Record ID</th>
@@ -239,6 +239,7 @@
                                             <th>Updated By</th>
                                             <th>Completed Date</th>
                                             <th>Status</th>
+                                            <th>Timeliness</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -249,6 +250,9 @@
                                             <td>${record.completed_by}</td>
                                             <td>${record.completed_on ? record.completed_on : 'missing'}</td>
                                             <td><span class="badge badge-${record.status === 'done' ? 'success' : record.status === 'on_hold' ? 'warning' : record.status === 'cancelled' ? 'secondary' : 'info'}">${record.status}</span></td>
+                                            <td class="${record.completed_on ? (new Date(record.completed_on) > new Date(record.due_date) ? 'text-danger' : 'text-success') : ''}">
+                                                ${record.completed_on ? (new Date(record.completed_on) > new Date(record.due_date) ? 'Late' : 'On Time') : 'N/A'}
+                                            </td>
                                         </tr>`).join('')}
                                     </tbody>
                                 </table>
@@ -276,16 +280,27 @@
                                         <td>${record.completed_by}</td>
                                         <td>${record.completed_on ? record.completed_on : 'missing'}</td>
                                         <td><span class="badge badge-${record.status === 'done' ? 'success' : record.status === 'on_hold' ? 'warning' : record.status === 'cancelled' ? 'secondary' : 'info'}">${record.status}</span></td>
+                                        <td class="${record.completed_on ? (new Date(record.completed_on) > new Date(record.due_date) ? 'text-danger' : 'text-success') : ''}">
+                                            ${record.completed_on ? (new Date(record.completed_on) > new Date(record.due_date) ? 'Late' : 'On Time') : 'N/A'}
+                                        </td>
                                     </tr>
-                                    <div class="modal fade" id="rec-${record.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="rec-${record.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="text-align:start;">
                                         <div class="modal-dialog" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                <h5 class="modal-title" id="exampleModalLabel">#${record.id} Details</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
+                                                    <h5 class="modal-title" id="exampleModalLabel">
+                                                        #${record.id} Details <br>
+                                                        <small class="${record.completed_on ? (new Date(record.completed_on) > new Date(record.due_date) ? 'text-danger' : 'text-success') : ''}">
+                                                            ${record.completed_on ? (new Date(record.completed_on) > new Date(record.due_date) ? 'Late' : 'On Time') : 'N/A'}
+                                                        </small>
+                                                    
+                                                    </h5>
+                                                    
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
                                                 </div>
+                                                
                                                 <div class="modal-body">
                                                     <p><strong>Due Date:</strong> ${record.due_date}</p>
                                                     <p><strong>Completed By:</strong> ${record.completed_by}</p>
