@@ -38,6 +38,7 @@ RECURRENCE = [
 
 NOTIFICATION = [
     ('none', 'None'),
+    ('day of event', 'Day Of Event'),
     ('day before', 'Day Before'),
     ('week before', 'Week Before'),
     ('month before', 'Month Before'),

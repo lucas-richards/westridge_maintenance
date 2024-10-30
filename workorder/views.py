@@ -42,7 +42,6 @@ def dashboard(request):
             assets_workorders_count['three'] += 1
         else:
             assets_workorders_count['more'] += 1
-    print(assets_workorders_count)
 
     work_orders_records_status = {
         'done': work_orders_records.filter(status='done').count(),
@@ -64,7 +63,7 @@ def dashboard(request):
     work_orders_records_status['on_hold_percentage'] = round((work_orders_records_status['on_hold'] / work_orders_records_status['total']) * 100) if work_orders_records_status['total'] != 0 else 0
     work_orders_records_status['scheduled_percentage'] = round((work_orders_records_status['scheduled'] / work_orders_records_status['total']) * 100) if work_orders_records_status['total'] != 0 else 0
     work_orders_records_status['cancelled_percentage'] = round((work_orders_records_status['cancelled'] / work_orders_records_status['total']) * 100) if work_orders_records_status['total'] != 0 else 0
-    print(work_orders_records_status)
+ 
 
     # get the KPI values
     status_kpi = KPIValue.objects.filter(kpi__name='Status Done').order_by('date')
@@ -79,8 +78,6 @@ def dashboard(request):
     overdue_kpi = KPIValue.objects.filter(kpi__name='Overdue', date__gte=timezone.now() - datetime.timedelta(days=30)).order_by('date')
     overdue_kpi_values = [value.value for value in overdue_kpi]
     overdue_kpi_dates = [value.date.strftime('%m-%d-%Y') for value in overdue_kpi]
-    print('overdue_kpi_values', overdue_kpi_values)
-    print('overdue_kpi_dates', overdue_kpi_dates)
 
 
     context = {
@@ -174,8 +171,6 @@ def assets(request):
 def add_asset(request):
     if request.method == 'POST':
         form = AssetEditForm(request.POST, request.FILES)
-        # print location from request
-        print('location', request.POST['location'])
         # add created by
         form.instance.created_by = request.user
         # if the location is warehouse, then find the last code that starts with W and increment it by 1. If last code is O-003 then the new code will be O-004
@@ -250,7 +245,6 @@ def delete_asset(request, id):
 @login_required
 def asset_workorders_new(request, id):
     asset = Asset.objects.get(id=id)
-    print('asset', asset)
     if request.method == 'POST':
         form = AssetWorkOrderNewForm(request.POST, request.FILES)
         # add created by
@@ -420,7 +414,6 @@ def workorder(request, id):
                     for item in CheckListItem.objects.filter(workorder_record=last_record).order_by('created_on')
                 ],
             }
-            print('data', data.get('last_record_checklist_items'))
             return JsonResponse(data)
     except WorkOrder.DoesNotExist:
         return JsonResponse({'error': 'workorder not found'}, status=404)
@@ -537,7 +530,6 @@ def workorder_record(request, id):
 
         if request.method == "POST":
             if status:
-                print('workorder recor',request.POST)
                 # get user
                 user = User.objects.get(username=request.user)
                 record.completed_by = user
@@ -557,7 +549,6 @@ def workorder_record(request, id):
                     if item_status:
                         item.status = item_status
                         item.notes = request.POST.get(f'checklist_item_{item.id}_notes', '')
-                        print('item', item)
                         item.save()
                 record.save()
                 messages.success(request, 'Record updated successfully')

@@ -214,7 +214,7 @@
                                         ${data.description ? `<p style="height: 200px; overflow-y: scroll;">${data.description.split('\n').map(line => `<span>${line}</span><br>`).join('')}</p>` : ''}
                                         ${data.attachments ? `<p><strong>Attachment: </strong><a target="_blank" href="${data.attachments}">link</a></p>` : ''}
                                         
-                                        ${data.last_record_checklist_items ? `
+                                        ${data.last_record_checklist_items && data.last_record_checklist_items.length > 0 ? `
                                             <p><strong>Checklist Items:</strong></p>
                                             <div class="row">
                                                 ${data.last_record_checklist_items.map(item => `
