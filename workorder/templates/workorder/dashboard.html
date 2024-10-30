@@ -220,7 +220,7 @@
                     max: function() {
                         const maxOverdue = Math.max(...{{ overdue_kpi_values|safe }});
                         const maxCompleted = Math.max(...{{ productivity_kpi_values|safe }});
-                        return Math.max(maxOverdue, maxCompleted) + 5;
+                        return Math.max(maxOverdue, maxCompleted) + 20;
                     }(),
                     stacked: true,
                 }
@@ -231,7 +231,10 @@
                         return context.dataset.data[context.dataIndex] !== 0; // Do not display label if value is 0
                     },
                     anchor: 'end',
-                    align: 'top',
+                    align: 'end', // Change align to 'end' to avoid overlapping
+                    offset: function(context) {
+                        return context.datasetIndex === 1 ? 10 : 0; // Add offset only to the second dataset
+                    },
                     color: 'black',
                 }
             },
