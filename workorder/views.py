@@ -252,6 +252,7 @@ def asset_workorders_new(request, id):
         form.instance.created_by = request.user
         if form.is_valid():
             form.save()
+            messages.success(request, 'Work Order added successfully')
             # redirect to asset
             return redirect('workorder-assets')
     else:
@@ -322,6 +323,7 @@ def workorders(request):
         form = WorkOrderEditForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Work Order added successfully')
             return redirect('workorder-workorders')
         else:
             print(form.errors)
