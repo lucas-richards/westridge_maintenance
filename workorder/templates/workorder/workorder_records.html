@@ -220,7 +220,7 @@
                                     ${data.purchase_parts && data.purchase_parts.length > 0 
                                     
                                     ? `<label>Purchase Parts:</label>
-                                            <div class="card p-3 mb-3"> 
+                                            <div class="card pt-3 pl-4"> 
                                                 ${data.purchase_parts.map(item => `
                                                 
                                                 <div class="form-group form-check">
@@ -348,17 +348,32 @@
         });
 
         if (status === 'done' && !completedOn) {
-            alert('Please provide a completed on date when the status is set to "Done".');
+            Swal.fire({
+                title: 'Missing Date',
+                text: 'Please provide a completed on date when the status is set to "Done".',
+                icon: 'warning',
+                confirmButtonText: 'OK'
+                });
             return false; // Prevent form submission
         }
 
         if (status === 'done' && !allChecklistItemsSelected) {
-            alert('Please select a status for all checklist items.');
+            Swal.fire({
+            title: 'Incomplete Checklist',
+            text: 'Please select a status for all checklist items.',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+            });
             return false; // Prevent form submission
         }
 
         if (status === 'done' && !allPurchasePartsChecked) {
-            alert('Please check all purchase parts.');
+            Swal.fire({
+            title: 'Incomplete Purchase Parts',
+            text: 'Please check all purchase parts.',
+            icon: 'warning',
+            confirmButtonText: 'OK'
+            });
             return false; // Prevent form submission
         }
 

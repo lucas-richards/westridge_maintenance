@@ -162,6 +162,19 @@ class Command(BaseCommand):
                             print('new_checklist:', new_checklist)
                             print('new record:', new)
 
+                    #  if last record purchase parts exist add them to the new record
+                    if last_work_order_record.purchase_parts.exists():
+                        for part in last_work_order_record.purchase_parts.all():
+                            part_data = {
+                                'workorder_record': new,
+                                'title': part.title,
+                                'description': part.description,
+                                # Add any other fields that need to be copied
+                            }
+                            new_part = PurchasePart.objects.create(**part_data)
+                            print('new_part:', new_part)
+                            print('new record:', new)
+
             else:
                 WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now())
 
