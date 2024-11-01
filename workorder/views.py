@@ -522,6 +522,7 @@ def workorder_record(request, id):
                 'id': record.id,
                 'workorder_id': record.workorder.id if record.workorder else '',
                 'workorder_title': record.workorder.title if record.workorder else '',
+                'workorder_assigned_to': record.workorder.assigned_to.username if record.workorder.assigned_to else '',
                 'workorder_recurrence': record.workorder.get_recurrence_display() if record.workorder else '',
                 'workorder_description': record.workorder.description if record.workorder else '',
                 'workorder_image': record.workorder.image.url if record.workorder.image else '',
