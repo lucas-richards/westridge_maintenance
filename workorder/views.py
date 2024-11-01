@@ -415,6 +415,15 @@ def workorder(request, id):
                     }
                     for item in CheckListItem.objects.filter(workorder_record=last_record).order_by('created_on')
                 ],
+                'last_record_purchase_parts': [
+                    {
+                        'id': part.id, 
+                        'title': part.title, 
+                        'description': part.description, 
+                        'purchased': part.purchased
+                    }
+                    for part in last_record.purchase_parts.all()
+                ],
             }
             return JsonResponse(data)
     except WorkOrder.DoesNotExist:
@@ -526,6 +535,7 @@ def workorder_record(request, id):
                 'comments': record.comments if record.comments else '',
                 'time_until_due': (record.due_date - timezone.now()- datetime.timedelta(days=1) ).days if record.due_date else '',
                 'checklist_items': [{'id': item.id, 'title': item.title, 'description': item.description, 'status': item.status, 'due_date': item.due_date.strftime('%m-%d-%Y') if item.due_date else '', 'attachments': item.attachments.url if item.attachments else '', 'notes': item.notes} for item in checklist_items],
+                'purchase_parts': [{'id': part.id, 'title': part.title, 'description': part.description, 'purchased': part.purchased } for part in record.purchase_parts.all()],
         }     
 
         status = request.POST.get('status')
@@ -552,6 +562,12 @@ def workorder_record(request, id):
                         item.status = item_status
                         item.notes = request.POST.get(f'checklist_item_{item.id}_notes', '')
                         item.save()
+                print('parts', record.purchase_parts.all())
+                print('request.POST', request.POST)
+                for part in record.purchase_parts.all():
+                    value = request.POST.get(f'purchase_part_{part.id}', False)
+                    part.purchased = True if value == 'on' else False
+                    part.save()
                 record.save()
                 messages.success(request, 'Record updated successfully')
                 return redirect('workorder-workorder-records')

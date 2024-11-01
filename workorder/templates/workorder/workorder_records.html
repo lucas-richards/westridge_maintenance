@@ -216,8 +216,20 @@
                                         <label for="completed_on">Completed On:</label>
                                         <input type="date" class="form-control" id="completed_on" name="completed_on" value="${data.completed_on}">
                                     </div>
+
+                                    ${data.purchase_parts && data.purchase_parts.length > 0 
                                     
-                                        
+                                    ? `<label>Purchase Parts:</label>
+                                            <div class="card p-3 mb-3"> 
+                                                ${data.purchase_parts.map(item => `
+                                                
+                                                <div class="form-group form-check">
+                                                    <input class="form-check-input" type="checkbox" id="purchase_part_${item.id}" name="purchase_part_${item.id}" ${item.purchased ? 'checked' : ''}>
+                                                    <label class="form-check-label" for="purchase_part_${item.id}">${item.title}</label>
+                                                </div>
+                                            `).join('')}</div>` : ''}
+                                            
+
                                     ${data.checklist_items && data.checklist_items.length > 0 ? `<div class="card p-3 mb-3"> ${data.checklist_items.map(item => `
                                         <div class="form-group row">
                                             <label for="checklist_item_${item.id}" class="col-sm-8 col-form-label">${item.title}</label>
@@ -279,6 +291,8 @@
                 `;
                 
             })
+            // run checkpurchasing
+            .then(checkPurchasing)
             .catch(error => {
                 console.error('Error loading workorder details:', error);
             });
@@ -298,15 +312,38 @@
 });
 
 </script>
+<!-- check if user is from purchasing to checkboxes -->
+<script>
+    function checkPurchasing () {
+        const userDepartment = "{{ user.profile.department }}"; // Assuming user profile department is available in the template context
+
+        if (userDepartment.toLowerCase() === 'purchasing') {
+            document.querySelectorAll('input[id^="purchase_part_"]').forEach(checkbox => {
+                checkbox.disabled = false;
+            });
+        } else {
+            document.querySelectorAll('input[id^="purchase_part_"]').forEach(checkbox => {
+                checkbox.disabled = true;
+            });
+        }
+    };
+</script>
 <script>
     function validateForm() {
         const status = document.getElementById('status').value;
         const completedOn = document.getElementById('completed_on').value;
         let allChecklistItemsSelected = true;
+        let allPurchasePartsChecked = true;
 
         document.querySelectorAll('select[id^="checklist_item_"]').forEach(selectElement => {
             if (!selectElement.value) {
                 allChecklistItemsSelected = false;
+            }
+        });
+
+        document.querySelectorAll('input[id^="purchase_part_"]').forEach(checkbox => {
+            if (!checkbox.checked) {
+                allPurchasePartsChecked = false;
             }
         });
 
@@ -320,8 +357,14 @@
             return false; // Prevent form submission
         }
 
+        if (status === 'done' && !allPurchasePartsChecked) {
+            alert('Please check all purchase parts.');
+            return false; // Prevent form submission
+        }
+
         return true; // Allow form submission
     }
+    
 </script>
 <script>
     function filterassets() {

@@ -146,6 +146,8 @@ class Command(BaseCommand):
                         new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=180))
                     elif work_order.recurrence == 'Yearly':
                         new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=365))
+                    elif work_order.recurrence == '3 Years':
+                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=timezone.now() + dt.timedelta(days=1095))
                     
                     if last_work_order_record.checklist_items.exists():
                         for item in last_work_order_record.checklist_items.all():
