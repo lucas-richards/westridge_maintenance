@@ -83,7 +83,7 @@
                     <div class="d-flex justify-content-center align-items-baseline">
                         <p style="min-width: 70px;"><strong>WO{{ data.workorder.id }}</strong> </p>
                         <small style="min-width: 50px" class="mr-2 truncate">#{{ data.id }}</small>
-                        <p style="min-width: 200px; display: none;" class="mr-2 truncate asset">{{ data.workorder.asset }}</p>
+                        
                         <p style="min-width: 200px;" class="mr-2 truncate title">{{ data.workorder.title }}</p>
                         <!-- green dot if status is online  -->
                         {% if data.status == 'Done' %}
@@ -102,6 +102,7 @@
                         <span style="min-width: 70px;" class="badge badge-secondary">{{ data.status }}</span>
 
                         {% endif %}
+                        
                     </div>
                     <div>
                         {% if data.status == 'Done' or data.status == 'Cancelled' %}
@@ -119,6 +120,7 @@
                         {% endif %}
 
                     </div>
+                    <small style="width: 0.5px; display: none;" class="truncate asset">{{ data.workorder.asset }}</small>
                     
                     
                     
@@ -349,11 +351,12 @@
 
         if (status === 'done' && !completedOn) {
             Swal.fire({
-                title: 'Missing Date',
-                text: 'Please provide a completed on date when the status is set to "Done".',
-                icon: 'warning',
-                confirmButtonText: 'OK'
-                });
+            title: 'Missing Date',
+            text: 'Please provide a completed on date when the status is set to "Done".',
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#246cff'
+            });
             return false; // Prevent form submission
         }
 
@@ -362,7 +365,8 @@
             title: 'Incomplete Checklist',
             text: 'Please select a status for all checklist items.',
             icon: 'warning',
-            confirmButtonText: 'OK'
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#246cff'
             });
             return false; // Prevent form submission
         }
@@ -372,7 +376,8 @@
             title: 'Incomplete Purchase Parts',
             text: 'Please check all purchase parts.',
             icon: 'warning',
-            confirmButtonText: 'OK'
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#246cff'
             });
             return false; // Prevent form submission
         }

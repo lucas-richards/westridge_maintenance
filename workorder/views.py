@@ -541,35 +541,42 @@ def workorder_record(request, id):
         status = request.POST.get('status')
 
         if request.method == "POST":
+            user_assigned_to = record.workorder.assigned_to
+            user_logged_in = request.user
+
+
             if status:
-                # get user
-                user = User.objects.get(username=request.user)
-                record.completed_by = user
-                record.status = status
-                completed_on = request.POST.get('completed_on')
-                if completed_on:
-                    # Convert string to a timezone-aware datetime
-                    record.completed_on = timezone.make_aware(
-                        timezone.datetime.strptime(completed_on, '%Y-%m-%d')
-                    )
-                # Handle file upload
-                if 'attachments' in request.FILES:
-                    record.attachments = request.FILES['attachments']
-                record.comments = request.POST.get('comments')
-                for item in checklist_items:
-                    item_status = request.POST.get(f'checklist_item_{item.id}')
-                    if item_status:
-                        item.status = item_status
-                        item.notes = request.POST.get(f'checklist_item_{item.id}_notes', '')
-                        item.save()
-                print('parts', record.purchase_parts.all())
-                print('request.POST', request.POST)
-                for part in record.purchase_parts.all():
-                    value = request.POST.get(f'purchase_part_{part.id}', False)
-                    part.purchased = True if value == 'on' else False
-                    part.save()
-                record.save()
-                messages.success(request, 'Record updated successfully')
+                if user_assigned_to == user_logged_in:
+                    # get user
+                    user = User.objects.get(username=request.user)
+                    record.completed_by = user
+                    record.status = status
+                    completed_on = request.POST.get('completed_on')
+                    if completed_on:
+                        # Convert string to a timezone-aware datetime
+                        record.completed_on = timezone.make_aware(
+                            timezone.datetime.strptime(completed_on, '%Y-%m-%d')
+                        )
+                    # Handle file upload
+                    if 'attachments' in request.FILES:
+                        record.attachments = request.FILES['attachments']
+                    record.comments = request.POST.get('comments')
+                    for item in checklist_items:
+                        item_status = request.POST.get(f'checklist_item_{item.id}')
+                        if item_status:
+                            item.status = item_status
+                            item.notes = request.POST.get(f'checklist_item_{item.id}_notes', '')
+                            item.save()
+                    print('parts', record.purchase_parts.all())
+                    print('request.POST', request.POST)
+                    for part in record.purchase_parts.all():
+                        value = request.POST.get(f'purchase_part_{part.id}', False)
+                        part.purchased = True if value == 'on' else False
+                        part.save()
+                    record.save()
+                    messages.success(request, 'Record updated successfully')
+                else:
+                    messages.error(request, 'Error updating record. Only the assigned user can update it')
                 return redirect('workorder-workorder-records')
 
             
