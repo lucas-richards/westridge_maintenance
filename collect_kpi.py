@@ -10,8 +10,9 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from datetime import date
 from training.models import KPI, KPIValue, Profile, TrainingEvent, TrainingModule, ProfileTrainingEvents
-from workorder.models import WorkOrder, WorkOrderRecord, KPI as KPI2, KPIValue as KPIValue2, CheckListItem
+from workorder.models import WorkOrder, WorkOrderRecord, KPI as KPI2, KPIValue as KPIValue2, CheckListItem, PurchasePart
 import datetime as dt
+from django.utils import timezone
 
 class Command(BaseCommand):
     help = 'Calculate and save daily KPI values'
@@ -184,7 +185,7 @@ class Command(BaseCommand):
         overdue = 0
         for work_order in work_orders:
             last_work_order_record = work_order.workorderrecord_set.last()
-            if last_work_order_record and last_work_order_record.status not in ['done', 'cancelled'] and last_work_order_record.due_date < timezone.now() + dt.timedelta(days=1):
+            if last_work_order_record and last_work_order_record.status not in ['done', 'cancelled'] and last_work_order_record.due_date.date() < timezone.now().date():
                 overdue += 1
         # save to over due kpi
         self.save_kpi2('Overdue', overdue)

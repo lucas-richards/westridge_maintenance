@@ -101,7 +101,7 @@ class Command(BaseCommand):
             author_email = 'lrichards@westridgelabs.com'
             recipients = [f'{workorder.assigned_to.email}']
 
-            subject = f'{workorder.title} is due soon'
+            subject = f'Westridge Labs - #{workorder.id} - {workorder.title}'
             message = f'''
             <div style="padding: 16px; border: 1px solid #ddd; border-radius: 4px;">
                 <h3 style="color: #007bff;">Reminder: Work Order Due Soon</h3>
