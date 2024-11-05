@@ -27,8 +27,13 @@ class WorkOrderEditForm(forms.ModelForm):
         widgets = {
             'priority': forms.Select(choices=CRITICALITY_CHOICES),
             'first_due_date': forms.DateInput(attrs={'type': 'date'}),
-            'assigned_to': forms.Select(choices=User.objects.order_by('username').values_list('username', 'username')),
         }
+        # Define the assigned_to field with an ordered queryset
+        assigned_to = forms.ModelChoiceField(
+            queryset=User.objects.order_by('-username'),
+            widget=forms.Select(),
+            empty_label="Select User"  # Optional, you can customize the empty label
+        )
 
 class AssetWorkOrderNewForm(forms.ModelForm):
     class Meta:

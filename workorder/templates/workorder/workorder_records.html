@@ -280,7 +280,7 @@
                                     <p><strong>Title:</strong> ${data.workorder_title}</p>
                                     <strong>Description:</strong>
                                     ${data.workorder_description ? `<p style="height: 200px; overflow-y: scroll;">${data.workorder_description.split('\n').map(line => `<span>${line}</span><br>`).join('')}</p>` : ''}
-                                    ${data.workorder_image ? `<img src="${data.workorder_image}" alt="workorder image">` : ''}
+                                    ${data.workorder_image ? `<img style="max-width: 100%; height: auto;" src="${data.workorder_image}" alt="workorder image">` : ''}
                                     ${data.workorder_attachment ? 
                                         (/\.(jpg|jpeg|png|gif)$/i.test(data.workorder_attachment) ? 
                                             `<p><strong>Attachment:</strong><br><img src="${data.workorder_attachment}" alt="Attachment Image" style="max-width: 100%; height: auto;"></p>` : 

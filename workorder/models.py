@@ -200,7 +200,7 @@ class WorkOrderRecord(models.Model):
             overdue = 0
             for work_order in work_orders:
                 last_work_order_record = work_order.workorderrecord_set.last()
-                if last_work_order_record and last_work_order_record.status not in ['done', 'cancelled'] and last_work_order_record.due_date < timezone.now() + dt.timedelta(days=1):
+                if last_work_order_record and last_work_order_record.status not in ['done', 'cancelled'] and last_work_order_record.due_date.date() < timezone.now().date():
                     overdue += 1
             print('overdue:', overdue)
             print('productivity:', value)
