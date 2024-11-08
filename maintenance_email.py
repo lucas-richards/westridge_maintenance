@@ -85,13 +85,13 @@ class Command(BaseCommand):
             last_record = WorkOrderRecord.objects.filter(workorder=workorder).exclude(status__in=['done', 'cancelled']).order_by('-due_date').first()
             if last_record and last_record.due_date:
                 # day of event
-                if workorder.notification == 'day of event' and (last_record.due_date - timezone.now()).days <= 1:
+                if workorder.notification == 'day of event' and (last_record.due_date.date() - timezone.now()).days <= 0:
                     self.send_notification_email(workorder, last_record)
-                elif workorder.notification == 'day before' and (last_record.due_date - timezone.now()).days <= 2:
+                elif workorder.notification == 'day before' and (last_record.due_date.date() - timezone.now()).days <= 1:
                     self.send_notification_email(workorder, last_record)
-                elif workorder.notification == 'week before' and (last_record.due_date - timezone.now()).days <= 7:
+                elif workorder.notification == 'week before' and (last_record.due_date.date() - timezone.now()).days <= 7:
                     self.send_notification_email(workorder, last_record)
-                elif workorder.notification == 'month before' and (last_record.due_date - timezone.now()).days <= 30:
+                elif workorder.notification == 'month before' and (last_record.due_date.date() - timezone.now()).days <= 30:
                     self.send_notification_email(workorder, last_record)
         
     def send_notification_email(self, workorder, record):

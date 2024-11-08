@@ -1,0 +1,179 @@
+{% extends "workorder/tabs_nav.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+{% if user.is_authenticated %}
+
+<div class="mt-5 p-3 card " >
+    <h4>New Entry</h4>
+    <p>Enter all the items produced in the day</p>
+    <form id="entry_form" method="POST" action="{% url 'workorder-add-production-entry' %}" class="post-form mt-3">
+        
+        {% csrf_token %}
+        <!-- drop down to select item 1 -->
+        <div class="items">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Item</th>
+                        <th>Qty</th>
+                        <th>Produce Time</th>
+                        <th style="width: 10%;">Inline People</th>
+                        <th>Setup Time</th>
+                        <th style="width: 10%;">Setup People</th>
+                    </tr>
+                </thead>
+                <tbody id="items_table_body">
+                    <tr>
+                        <td>
+                            <select name="item1" id="item1" class="form-control">
+                                {% for item in items %}
+                                    <option value="{{ item.id }}">{{ item }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" name="qty1" id="qty1" class="form-control" required>
+                        </td>
+                        <td>
+                            <input type="text" name="produced_in_time1" id="produced_in_time1" class="form-control" required>
+                        </td>
+                        <td>
+                            <input type="number" name="people_inline1" id="people_inline1" class="form-control" required>
+                        </td>
+                        <td>
+                            <input type="text" name="setup_time1" id="setup_time1" class="form-control" required>
+                        </td>
+                        <td>
+                            <input type="number" name="setup_time_people1" id="setup_time_people1" class="form-control" required>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- add a + that will create another selector for item 2 -->
+        <button class="mt-1 btn btn-link" type="button" id="add_item">+</button>
+        
+        <!-- completed date field -->
+        <div class="form-group">
+            <label for="completed_date1">Completed Date:</label>
+            <input style="max-width: 200px;" type="date" id="completed_date" name="completed_date" class="dateinput form-control" required>
+        </div>
+
+        <!-- submit button -->
+        <div class="form-group" id="upload-form">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+
+        
+        <div class="form-group">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </form>
+</div>
+        
+    
+
+
+    
+
+
+<script>
+    document.getElementById("entry_form").addEventListener("submit", function() {
+        document.getElementById("loading-indicator2").style.display = "block";
+        document.getElementById("entry_form").style.display = "none";
+    });
+</script>
+<script>
+    document.getElementById("upload-form").addEventListener("submit", function() {
+        document.getElementById("loading-indicator").style.display = "block";
+        document.getElementById("upload-form").style.display = "none";
+    });
+</script>
+<script>
+    var itemCount = 1; // Initialize item count
+
+    document.getElementById("add_item").addEventListener("click", function() {
+        itemCount++; // Increment item count
+        var tableBody = document.getElementById("items_table_body");
+        var newRow = document.createElement("tr");
+
+        var itemCell = document.createElement("td");
+        var itemSelect = document.createElement("select");
+        itemSelect.className = "form-control";
+        itemSelect.name = "item" + itemCount; // Ensure this is unique if multiple divs are added
+        {% for item in items %}
+            var option = document.createElement("option");
+            option.value = "{{ item.id }}";
+            option.text = "{{ item }}";
+            itemSelect.appendChild(option);
+        {% endfor %}
+        itemCell.appendChild(itemSelect);
+
+        var qtyCell = document.createElement("td");
+        var qtyInput = document.createElement("input");
+        qtyInput.type = "number";
+        qtyInput.name = "qty" + itemCount;
+        qtyInput.className = "form-control";
+        qtyInput.required = true;
+        qtyCell.appendChild(qtyInput);
+
+        var producedInTimeCell = document.createElement("td");
+        var producedInTimeInput = document.createElement("input");
+        producedInTimeInput.type = "text";
+        producedInTimeInput.name = "produced_in_time" + itemCount;
+        producedInTimeInput.className = "form-control";
+        producedInTimeInput.required = true;
+        producedInTimeCell.appendChild(producedInTimeInput);
+
+        var peopleInlineCell = document.createElement("td");
+        var peopleInlineInput = document.createElement("input");
+        peopleInlineInput.type = "number";
+        peopleInlineInput.name = "people_inline" + itemCount;
+        peopleInlineInput.className = "form-control";
+        peopleInlineInput.required = true;
+        peopleInlineCell.appendChild(peopleInlineInput);
+
+        var setupTimeCell = document.createElement("td");
+        var setupTimeInput = document.createElement("input");
+        setupTimeInput.type = "text";
+        setupTimeInput.name = "setup_time" + itemCount;
+        setupTimeInput.className = "form-control";
+        setupTimeInput.required = true;
+        setupTimeCell.appendChild(setupTimeInput);
+
+        var setupTimePeopleCell = document.createElement("td");
+        var setupTimePeopleInput = document.createElement("input");
+        setupTimePeopleInput.type = "number";
+        setupTimePeopleInput.name = "setup_time_people" + itemCount;
+        setupTimePeopleInput.className = "form-control";
+        setupTimePeopleInput.required = true;
+        setupTimePeopleCell.appendChild(setupTimePeopleInput);
+
+        var actionCell = document.createElement("td");
+        var removeButton = document.createElement("button");
+        removeButton.className = "mt-1 btn btn-link text-danger";
+        removeButton.type = "button";
+        removeButton.innerHTML = "-";
+        removeButton.addEventListener("click", function() {
+            newRow.remove();
+        });
+        actionCell.appendChild(removeButton);
+
+        newRow.appendChild(itemCell);
+        newRow.appendChild(qtyCell);
+        newRow.appendChild(producedInTimeCell);
+        newRow.appendChild(peopleInlineCell);
+        newRow.appendChild(setupTimeCell);
+        newRow.appendChild(setupTimePeopleCell);
+        newRow.appendChild(actionCell);
+
+        tableBody.appendChild(newRow);
+    });
+</script>
+
+{% endif %}
+
+{% endblock content %}

@@ -250,3 +250,32 @@ class PurchasePart(models.Model):
     def __str__(self):
         return self.title
             
+
+class ProdItemStd(models.Model):
+    sku = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    pph = models.IntegerField(null=True, blank=True)
+    people_inline = models.IntegerField(null=True, blank=True)
+    setup_time = models.FloatField(null=True, blank=True)
+    setup_time_people = models.IntegerField(null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return self.sku + ' - ' + self.description
+
+class ProdItem(models.Model):
+    item = models.ForeignKey(ProdItemStd, on_delete=models.CASCADE)
+    qty_produced = models.IntegerField(null=True, blank=True)
+    people_inline = models.IntegerField(null=True, blank=True)
+    produced_in_time = models.FloatField(null=True, blank=True)
+    setup_time = models.FloatField(null=True, blank=True)
+    setup_time_people = models.IntegerField(null=True, blank=True)
+    completed_date = models.DateTimeField(null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return self.item.sku + ' - ' + self.item.description

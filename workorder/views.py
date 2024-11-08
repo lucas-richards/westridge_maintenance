@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Asset, Vendor, WorkOrder, WorkOrderRecord, KPI, KPIValue, CheckListItem
+from .models import Asset, Vendor, WorkOrder, WorkOrderRecord, KPI, KPIValue, CheckListItem, PurchasePart, ProdItemStd, ProdItem
 from users.models import Department
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -612,3 +612,82 @@ def add_workorder_record(request):
         'form': form,
     }
     return render(request, 'workorder/new_workorder_record.html', context)
+
+
+@login_required
+def production(request):
+
+    items = ProdItemStd.objects.all()
+
+    context = {
+        'title': 'Production',
+        'items': items,
+    }
+    return render(request, 'workorder/production.html', context)
+
+@login_required
+def add_production_entry(request):
+    if request.method == 'POST':
+        items = ProdItemStd.objects.all()
+        for i in range(1, len(items) + 1):
+            print(f'item{i}')
+            # print request
+            print(request.POST)
+            item_id = request.POST.get(f'item{i}')
+            qty = request.POST.get(f'qty{i}')
+            produced_in_time = request.POST.get(f'produced_in_time{i}')
+            people_inline = request.POST.get(f'people_inline{i}')
+            setup_time = request.POST.get(f'setup_time{i}')
+            setup_time_people = request.POST.get(f'setup_time_people{i}')
+            completed_date = request.POST.get('completed_date')
+
+            if item_id and qty and produced_in_time and people_inline and setup_time and setup_time_people and completed_date:
+                try:
+                    qty = int(qty)
+                    produced_in_time = float(produced_in_time)
+                    people_inline = int(people_inline)
+                    setup_time = float(setup_time)
+                    setup_time_people = int(setup_time_people)
+                    completed_date = timezone.datetime.strptime(completed_date, '%Y-%m-%d')
+                    
+                    ProdItem.objects.create(
+                        item_id=item_id,
+                        qty_produced=qty,
+                        produced_in_time=produced_in_time,
+                        people_inline=people_inline,
+                        setup_time=setup_time,
+                        setup_time_people=setup_time_people,
+                        completed_date=completed_date,
+                    )
+                except ValueError:
+                    messages.error(request, f'Invalid data for item {i}')
+            print(item_id, qty, produced_in_time, people_inline, setup_time, setup_time_people, completed_date)
+        messages.success(request, 'Production entry added successfully')
+        return redirect('workorder-production')
+    else:
+        items = ProdItemStd.objects.all()
+    context = {
+        'title': 'New Production Entry',
+        'items': items,
+    }
+    return render(request, 'workorder/new_production_entry.html', context)
+
+@login_required
+def productivity(request):
+    items = ProdItem.objects.all().order_by('-completed_date')
+    # add a property called pph (parts per hour) to each item
+    for item in items:
+        item.pph = round(item.qty_produced / item.produced_in_time) if item.produced_in_time != 0 else 0
+        item.eraned_hours_piece = 1/(item.item.pph/item.item.people_inline) if item.item.people_inline and item.item.pph != 0 else 0
+        item.earned_hours = round(((1/(item.item.pph/item.item.people_inline)) if item.item.people_inline and item.item.pph != 0 else 0 )*item.qty_produced, 1)
+        item.productivity = round(((1/(item.item.pph/item.item.people_inline) if item.item.people_inline and item.item.pph != 0 else 0 )*item.qty_produced)/item.people_inline*item.produced_in_time) if item.earned_hours != 0 else 0
+
+    # print all the attributes for items
+    for item in items:
+        print(item.__dict__)
+
+    context = {
+        'title': 'Productivity',
+        'items': items,
+    }
+    return render(request, 'workorder/productivity.html', context)
