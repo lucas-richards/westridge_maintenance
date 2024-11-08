@@ -6,9 +6,9 @@
 
 <!-- create two columns -->
 <div class="mt-5 p-3 card " >
-    <h4><strong>Today's Values</strong></h4>
+    <h4 class="mb-4"><strong>Today's Values</strong></h4>
     <!-- nice percetages cards next to each other -->
-    <div class="d-flex justify-content-around">
+    <div class="mb-3 d-flex justify-content-around">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title
@@ -33,7 +33,14 @@
                 <h1 class="card-text">20%</h1>
             </div>
         </div>
+        
     </div>
+    <div class="m-4">
+        <div class="d-flex align-items-center justify-content-center"  style="height: 200px;width: 100%;">
+            <canvas style="height: 200px;width: 100%;" id="myChart" ></canvas>
+        </div>
+    </div>
+    
         
 </div>
 
@@ -59,29 +66,32 @@
             <tr>
                 <td class="text-truncate">
                     {{ item.item }}<br>
-                    <small class="text-secondary">Std</small>
+                    <small class="text-secondary"><i>Std</i></small>
                 </td>
-                <td>{{ item.qty_produced }}</td>
                 <td>
-                    {{ item.produced_in_time }}
+                    {{ item.qty_produced }}
+                </td>
+                <td>
+                    {{ item.produced_in_time }}<br>
+                    <small class="text-secondary"><i>{{ item.std_hours }}</i></small>
                 </td>
                 <td>
                     {{ item.pph }}<br>
-                    <small class="text-secondary">{{ item.item.pph }}</small>
+                    <small class="text-secondary"><i>{{ item.item.pph }}</i></small>
                 </td>
                 <td>
                     {{ item.people_inline }}<br>
-                    <small class="text-secondary">{{ item.item.people_inline }}</small>
+                    <small class="text-secondary"><i>{{ item.item.people_inline }}</i></small>
                 </td>
                 <td>
                     {{ item.setup_time }}<br>
-                    <small class="text-secondary">{{ item.item.setup_time }}</small>
+                    <small class="text-secondary"><i>{{ item.item.setup_time }}</i></small>
                 </td>
                 
                 <td>
                     {{ item.setup_time_people }}
                     <br>
-                    <small class="text-secondary">{{ item.item.setup_time_people }}</small>
+                    <small class="text-secondary"><i>{{ item.item.setup_time_people }}</i></small>
                 </td>
                 <td>
                     {{ item.earned_hours }}
@@ -96,6 +106,67 @@
     </table>
     
 </div>
+
+<!-- dynamic charts js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<script>
+    Chart.register(ChartDataLabels);
+    
+    const ctx = document.getElementById('myChart').getContext('2d');
+    
+    // Create the chart
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ status_kpi_dates|safe }},
+            datasets: [{
+                label: 'Productivity',
+                data: {{ status_kpi_values|safe }},
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+                pointRadius: 0,
+            },
+            {
+                label: 'Goal',
+                data: new Array({{ status_kpi_dates|length }}).fill(80),
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+                borderDash: [10, 5],
+                pointRadius: 0,
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    min: 0,
+                    max: 120,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%'; // add percentage sign 
+                        }
+                    }
+                }
+            },
+            plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    color: 'black',
+                    formatter: function(value, context) {
+                        if (context.dataset.label === 'Goal') {
+                            return '';
+                        }
+                        return value + '%';
+                    }
+                }
+            },
+        }
+    });
+</script>
         
     
 

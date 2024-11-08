@@ -678,16 +678,22 @@ def productivity(request):
     # add a property called pph (parts per hour) to each item
     for item in items:
         item.pph = round(item.qty_produced / item.produced_in_time) if item.produced_in_time != 0 else 0
-        item.eraned_hours_piece = 1/(item.item.pph/item.item.people_inline) if item.item.people_inline and item.item.pph != 0 else 0
+        item.earned_hours_piece = 1/(item.item.pph/item.item.people_inline) if item.item.people_inline and item.item.pph != 0 else 0
         item.earned_hours = round(((1/(item.item.pph/item.item.people_inline)) if item.item.people_inline and item.item.pph != 0 else 0 )*item.qty_produced, 1)
         item.productivity = round(((1/(item.item.pph/item.item.people_inline) if item.item.people_inline and item.item.pph != 0 else 0 )*item.qty_produced)/item.people_inline*item.produced_in_time) if item.earned_hours != 0 else 0
+        item.std_hours = round(item.qty_produced * item.earned_hours_piece/item.people_inline, 1)
 
-    # print all the attributes for items
-    for item in items:
-        print(item.__dict__)
+
+    status_kpi_dates = [item.completed_date.strftime('%m-%d-%Y') for item in items][::-1]
+    status_kpi_values = [item.productivity for item in items][::-1]
+
+    print(status_kpi_dates)
+    print(status_kpi_values)
 
     context = {
         'title': 'Productivity',
         'items': items,
+        'status_kpi_dates': status_kpi_dates,
+        'status_kpi_values': status_kpi_values,
     }
     return render(request, 'workorder/productivity.html', context)
