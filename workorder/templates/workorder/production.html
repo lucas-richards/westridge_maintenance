@@ -11,10 +11,24 @@
         
         {% csrf_token %}
         <!-- completed date field -->
-        <div class="form-group">
-            <label for="completed_date1">Completed Date:</label>
-            <input style="max-width: 200px;" type="date" id="completed_date" name="completed_date" class="dateinput form-control" required>
-        </div>
+         <div class="d-flex justify-content-start align-items-center">
+            <div class="form-group mr-4">
+                <label for="completed_date1">Completed Date:</label>
+                <input style="max-width: 200px;" type="date" id="completed_date" name="completed_date" class="dateinput form-control" required>
+            </div>
+            <!-- smount of people -->
+            <div class="form-group mr-4">
+                <label for="people_inline">People Inline:</label>
+                <input style="max-width: 100px;" type="number" id="people_inline" name="people" class="form-control" required>
+            </div>
+            <!-- extra hours -->
+            <div class="form-group">
+                <label for="extra_hours">Extra Hours:</label>
+                <input style="max-width: 100px;" type="number" id="extra_hours" name="extra_hours" class="form-control">
+            </div>
+         </div>
+        
+         
         <!-- drop down to select item 1 -->
         <div class="items">
             <table class="table">

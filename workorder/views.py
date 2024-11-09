@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Asset, Vendor, WorkOrder, WorkOrderRecord, KPI, KPIValue, CheckListItem, PurchasePart, ProdItemStd, ProdItem
+from .models import Asset, Vendor, WorkOrder, WorkOrderRecord, KPI, KPIValue, CheckListItem, PurchasePart, ProdItemStd, ProdItem, DayProductivity
 from users.models import Department
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -13,6 +13,8 @@ from django.utils import timezone
 import datetime
 from users.models import User
 import datetime as dt
+from django.core.paginator import Paginator
+from django.db.models.functions import TruncDate
 
 # Create your views here.
 
@@ -614,9 +616,10 @@ def add_workorder_record(request):
     return render(request, 'workorder/new_workorder_record.html', context)
 
 
+
+
 @login_required
 def production(request):
-
     items = ProdItemStd.objects.all()
 
     context = {
@@ -635,33 +638,53 @@ def add_production_entry(request):
             print(request.POST)
             item_id = request.POST.get(f'item{i}')
             qty = request.POST.get(f'qty{i}')
-            produced_in_time = request.POST.get(f'produced_in_time{i}')
+            produced_time = request.POST.get(f'produced_in_time{i}')
             people_inline = request.POST.get(f'people_inline{i}')
             setup_time = request.POST.get(f'setup_time{i}')
-            setup_time_people = request.POST.get(f'setup_time_people{i}')
+            setup_people = request.POST.get(f'setup_time_people{i}')
             completed_date = request.POST.get('completed_date')
 
-            if item_id and qty and produced_in_time and people_inline and setup_time and setup_time_people and completed_date:
+            if item_id and qty and produced_time and people_inline and setup_time and setup_people and completed_date:
                 try:
                     qty = int(qty)
-                    produced_in_time = float(produced_in_time)
+                    produced_time = float(produced_time)
                     people_inline = int(people_inline)
                     setup_time = float(setup_time)
-                    setup_time_people = int(setup_time_people)
+                    setup_people = int(setup_people)
                     completed_date = timezone.datetime.strptime(completed_date, '%Y-%m-%d')
                     
                     ProdItem.objects.create(
                         item_id=item_id,
                         qty_produced=qty,
-                        produced_in_time=produced_in_time,
+                        produced_time=produced_time,
                         people_inline=people_inline,
                         setup_time=setup_time,
-                        setup_time_people=setup_time_people,
+                        setup_people=setup_people,
                         completed_date=completed_date,
                     )
                 except ValueError:
                     messages.error(request, f'Invalid data for item {i}')
-            print(item_id, qty, produced_in_time, people_inline, setup_time, setup_time_people, completed_date)
+            print(item_id, qty, produced_time, people_inline, setup_time, setup_people, completed_date)
+            # create a DayProduction object
+            people = request.POST.get('people')
+            extra_hours = request.POST.get('extra_hours') if request.POST.get('extra_hours') else 0
+            if people:
+                try:
+                    people = int(people)
+                    extra_hours = float(extra_hours)
+                    # create a DayProduction object
+                    day_productivity, created = DayProductivity.objects.get_or_create(
+                        date=completed_date,
+                        defaults={'people': people, 'extra_hours': extra_hours, 'productivity': 0}
+                    )
+                    if not created:
+                        day_productivity.people = people
+                        day_productivity.extra_hours = extra_hours
+                    day_productivity.productivity = day_productivity.productivity or 0
+                    day_productivity.save()
+                except ValueError:
+                    messages.error(request, 'Invalid data for DayProductivity')
+
         messages.success(request, 'Production entry added successfully')
         return redirect('workorder-production')
     else:
@@ -674,26 +697,82 @@ def add_production_entry(request):
 
 @login_required
 def productivity(request):
-    items = ProdItem.objects.all().order_by('-completed_date')
+    # items = ProdItem.objects.all().order_by('-completed_date')
+    # Group items by completed_date (date only, ignoring time)
+    grouped_items = (
+        ProdItem.objects
+        .annotate(date=TruncDate('completed_date'))  # Truncate to date
+        .order_by('-date')
+    )
+
+    # Get unique dates from items
+    unique_dates = grouped_items.values_list('date', flat=True).distinct()
+
+    # Paginate dates
+    paginator = Paginator(unique_dates, 1)  # One date group per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Get the current date for this page
+    current_date = page_obj.object_list[0] if page_obj.object_list else None
+
+    # Filter items by the current date in the page
+    items = ProdItem.objects.filter(completed_date__date=current_date) if current_date else []
+
+
     # add a property called pph (parts per hour) to each item
     for item in items:
-        item.pph = round(item.qty_produced / item.produced_in_time) if item.produced_in_time != 0 else 0
-        item.earned_hours_piece = 1/(item.item.pph/item.item.people_inline) if item.item.people_inline and item.item.pph != 0 else 0
-        item.earned_hours = round(((1/(item.item.pph/item.item.people_inline)) if item.item.people_inline and item.item.pph != 0 else 0 )*item.qty_produced, 1)
-        item.productivity = round(((1/(item.item.pph/item.item.people_inline) if item.item.people_inline and item.item.pph != 0 else 0 )*item.qty_produced)/item.people_inline*item.produced_in_time) if item.earned_hours != 0 else 0
-        item.std_hours = round(item.qty_produced * item.earned_hours_piece/item.people_inline, 1)
+        item.pph = round(item.qty_produced / item.produced_time) if item.produced_time != 0 else 0
+        item.pphp = round(item.pph/item.people_inline) if item.people_inline != 0 else 0
+        item.item.pphp = round(item.item.pph/item.item.people_inline) if item.item.people_inline != 0 else 0
+        item.setup_total = round(item.setup_time * item.setup_people, 1) if item.setup_people != 0 else 0
+        item.item.setup_total = round(item.item.setup_time * item.item.setup_people, 1) if item.item.setup_people != 0 else 0
+        item.earned_hours_piece = 1 / (item.item.pph / item.item.people_inline) if item.item.people_inline and item.item.pph != 0 else 0
+        
+        # Actual times
+        item.setup_time_actual = round(item.setup_time * item.setup_people, 1)
+        item.inline_hours_actual = round(item.produced_time * item.people_inline, 1)
+        
+        # Earned hours
+        item.setup_earned_hours = round(item.item.setup_time * item.item.setup_people, 1) if item.setup_time else 0
+        item.inline_earned_hours = round(item.qty_produced * item.earned_hours_piece, 1)
+        
+        # Total earned hours
+        item.earned_hours_total = item.inline_earned_hours + item.setup_earned_hours
+        
+        # Productivity calculations
+        item.productivity_inline = round(item.pphp / item.item.pphp * 100, 0) if item.item.pphp != 0 else 0
+        item.productivity_setup = round(item.item.setup_total/item.setup_total * 100, 0) if item.setup_total != 0 else None
+
+        # Total productivity
+        if item.productivity_setup is not None:
+            item.productivity_total = round((item.inline_earned_hours/item.earned_hours_total*item.productivity_inline + item.setup_earned_hours/item.earned_hours_total*item.productivity_setup) , 0) if item.earned_hours_total != 0 else 0
+        else:
+            item.productivity_total = item.productivity_inline
+        
+        # Standard hours
+        item.std_hours = round(item.qty_produced * item.earned_hours_piece / item.item.people_inline, 1)
 
 
     status_kpi_dates = [item.completed_date.strftime('%m-%d-%Y') for item in items][::-1]
-    status_kpi_values = [item.productivity for item in items][::-1]
+    status_kpi_values = [item.productivity_total for item in items][::-1]
 
-    print(status_kpi_dates)
-    print(status_kpi_values)
+    # Get the corresponding DayProductivity object for the current date
+    day_productivity = None
+    if current_date:
+        day_productivity = DayProductivity.objects.filter(date=current_date).first()
+        # update the day productivity bvalues like earned hours, productivity and pieces produced
+        day_productivity.earned_hours = sum([item.earned_hours_total for item in items])
+        day_productivity.productivity = round(sum([item.productivity_total for item in items]) / len(items), 0) if len(items) != 0 else 0
+        day_productivity.total_produced = sum([item.qty_produced for item in items])
+        day_productivity.save()
 
     context = {
         'title': 'Productivity',
         'items': items,
+        'page_obj': page_obj,
         'status_kpi_dates': status_kpi_dates,
         'status_kpi_values': status_kpi_values,
+        'day_productivity': day_productivity,
     }
     return render(request, 'workorder/productivity.html', context)

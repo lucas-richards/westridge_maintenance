@@ -5,32 +5,41 @@
 {% if user.is_authenticated %}
 
 <!-- create two columns -->
+<div class="d-flex justify-content-between mt-4 mb-4">
+    {% if page_obj.has_previous %}
+        <a class="btn btn-outline-secondary" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+    {% else %}
+        <button class="btn btn-outline-secondary" disabled>Previous</button>
+    {% endif %}
+
+    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a class="btn btn-outline-secondary" href="?page={{ page_obj.next_page_number }}">Next</a>
+    {% else %}
+        <button class="btn btn-outline-secondary" disabled>Next</button>
+    {% endif %}
+</div>
 <div class="mt-5 p-3 card " >
-    <h4 class="mb-4"><strong>Today's Values</strong></h4>
+    <h4 class="mb-4"><strong>{{day_productivity.date}} Values</strong></h4>
     <!-- nice percetages cards next to each other -->
     <div class="mb-3 d-flex justify-content-around">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title
-                ">Total Productivity</h5>
-                <small class="card-text">All items together</small>
-                <h1 class="card-text">80%</h1>
+        <div class="card" style="flex: 1; margin: 0 5px;">
+            <div class="card-body text-center">
+            <h5 class="card-title">Total Pieces Produced</h5>
+            <h1 class="card-text">{{day_productivity.total_produced}}</h1>
             </div>
         </div>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title
-                ">Best Productivity</h5>
-                <small class="card-text">Best Item Performance</small>
-                <h1 class="card-text">100%</h1>
+        <div class="card" style="flex: 1; margin: 0 5px;">
+            <div class="card-body text-center">
+            <h5 class="card-title">Total Earned Hours</h5>
+            <h1 class="card-text">{{ day_productivity.earned_hours }}</h1>
             </div>
         </div>
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title
-                ">Worst Productivity</h5>
-                <small class="card-text">Worst Item Performance</small>
-                <h1 class="card-text">20%</h1>
+        <div class="card" style="flex: 1; margin: 0 5px;">
+            <div class="card-body text-center">
+            <h5 class="card-title">Productivity</h5>
+            <h1 class="card-text">{{day_productivity.productivity}}%</h1>
             </div>
         </div>
         
@@ -45,19 +54,23 @@
 </div>
 
 <div class="mt-5 p-3 card " >
+    
     <!-- table -->
     <table class="table table-hover">
         <thead class="">
             <tr>
-                <th style="width: 30%;">Item</th>
+                <th style="width: 10%;">Item</th>
                 <th>Qty</th>
-                <th>Hours to Produce</th>
                 <th>PPH</th>
-                <th>People Inline</th>
-                <th>Hours To Setup</th>
-                <th>People To Setup</th>
-                <th>Earned Hours</th>
-                <th>Productivity</th>
+                <th>Hrs To Prod</th>
+                <th>Ppl To Prod</th>
+                <th>Inline Earned Hrs</th>
+                <th>Inline Prod</th>
+                <th>Hrs To Setup</th>
+                <th>Ppl To Setup</th>
+                <th>Setup Earned Hours</th>
+                <th>Setup Prod</th>
+                <th>Total Prod</th>
                 <th>Completed Date</th>
             </tr>
         </thead>
@@ -72,32 +85,39 @@
                     {{ item.qty_produced }}
                 </td>
                 <td>
-                    {{ item.produced_in_time }}<br>
-                    <small class="text-secondary"><i>{{ item.std_hours }}</i></small>
-                </td>
-                <td>
                     {{ item.pph }}<br>
                     <small class="text-secondary"><i>{{ item.item.pph }}</i></small>
+                </td>
+                <td>
+                    {{ item.produced_time }}<br>
+                    <small class="text-secondary"><i>{{ item.std_hours }}</i></small>
                 </td>
                 <td>
                     {{ item.people_inline }}<br>
                     <small class="text-secondary"><i>{{ item.item.people_inline }}</i></small>
                 </td>
                 <td>
+                    {{ item.inline_earned_hours }}
+                </td>
+                <td>
+                    {{ item.productivity_inline }}%
+                </td>
+                <td>
                     {{ item.setup_time }}<br>
                     <small class="text-secondary"><i>{{ item.item.setup_time }}</i></small>
                 </td>
-                
                 <td>
-                    {{ item.setup_time_people }}
-                    <br>
-                    <small class="text-secondary"><i>{{ item.item.setup_time_people }}</i></small>
+                    {{ item.setup_people }}<br>
+                    <small class="text-secondary"><i>{{ item.item.setup_people }}</i></small>
                 </td>
                 <td>
-                    {{ item.earned_hours }}
+                    {{ item.setup_earned_hours }}
                 </td>
                 <td>
-                    {{ item.productivity }}%
+                    {{ item.productivity_setup|default:"-" }}{% if item.productivity_setup != None %}%{% endif %}
+                </td>
+                <td>
+                    {{ item.productivity_total }}%
                 </td>
                 <td>{{ item.completed_date }}</td>
             </tr>
@@ -106,6 +126,8 @@
     </table>
     
 </div>
+
+
 
 <!-- dynamic charts js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -143,7 +165,7 @@
                 y: {
                     beginAtZero: true,
                     min: 0,
-                    max: 120,
+                    max: 180,
                     ticks: {
                         callback: function(value) {
                             return value + '%'; // add percentage sign 
