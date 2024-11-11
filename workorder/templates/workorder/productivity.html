@@ -71,7 +71,7 @@
     <table class="table table-hover">
         <thead class="">
             <tr>
-                <th style="width: 10%;">Item</th>
+                <th>Item</th>
                 <th>Qty</th>
                 <th>PPH</th>
                 <th>Hrs To Prod</th>
@@ -89,7 +89,7 @@
         <tbody>
             {% for item in items %}
             <tr>
-                <td class="text-truncate">
+                <td style="max-width: 230px;" class="text-truncate">
                     {{ item.item }}<br>
                     <small class="text-secondary"><i>Std</i></small>
                 </td>
