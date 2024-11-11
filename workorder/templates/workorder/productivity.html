@@ -26,19 +26,31 @@
     <div class="mb-3 d-flex justify-content-around">
         <div class="card" style="flex: 1; margin: 0 5px;">
             <div class="card-body text-center">
-            <h5 class="card-title">Total Pieces Produced</h5>
+            <h5 class="card-title">Pieces Produced</h5>
             <h1 class="card-text">{{day_productivity.total_produced}}</h1>
             </div>
         </div>
         <div class="card" style="flex: 1; margin: 0 5px;">
             <div class="card-body text-center">
-            <h5 class="card-title">Total Earned Hours</h5>
+            <h5 class="card-title">Inline Productivity</h5>
+            <h1 class="card-text">{{day_productivity.productivity_inline}}%</h1>
+            </div>
+        </div>
+        <div class="card" style="flex: 1; margin: 0 5px;">
+            <div class="card-body text-center">
+            <h5 class="card-title">Earned Hours</h5>
             <h1 class="card-text">{{ day_productivity.earned_hours }}</h1>
             </div>
         </div>
         <div class="card" style="flex: 1; margin: 0 5px;">
             <div class="card-body text-center">
-            <h5 class="card-title">Productivity</h5>
+            <h5 class="card-title">Available Hours</h5>
+            <h1 class="card-text">{{ day_productivity.available_hours }}</h1>
+            </div>
+        </div>
+        <div class="card" style="flex: 1; margin: 0 5px;">
+            <div class="card-body text-center">
+            <h5 class="card-title">Daily Productivity</h5>
             <h1 class="card-text">{{day_productivity.productivity}}%</h1>
             </div>
         </div>

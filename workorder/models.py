@@ -280,8 +280,7 @@ class ProdItem(models.Model):
     def __str__(self):
         return self.item.sku + ' - ' + self.item.description
 
-    # def save(self, *args, **kwargs):
-    #     # recalculate the DayProductivity with all the ProdItems
+    
         
 
 

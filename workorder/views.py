@@ -620,7 +620,7 @@ def add_workorder_record(request):
 
 @login_required
 def production(request):
-    items = ProdItemStd.objects.all()
+    items = ProdItemStd.objects.all().order_by('sku')
 
     context = {
         'title': 'Production',
@@ -644,7 +644,7 @@ def add_production_entry(request):
             setup_people = request.POST.get(f'setup_time_people{i}')
             completed_date = request.POST.get('completed_date')
 
-            if item_id and qty and produced_time and people_inline and setup_time and setup_people and completed_date:
+            if item_id and qty and produced_time and people_inline and completed_date:
                 try:
                     qty = int(qty)
                     produced_time = float(produced_time)
@@ -763,8 +763,10 @@ def productivity(request):
         day_productivity = DayProductivity.objects.filter(date=current_date).first()
         # update the day productivity bvalues like earned hours, productivity and pieces produced
         day_productivity.earned_hours = sum([item.earned_hours_total for item in items])
-        day_productivity.productivity = round(sum([item.productivity_total for item in items]) / len(items), 0) if len(items) != 0 else 0
+        day_productivity.productivity_inline = round(sum([item.productivity_total for item in items]) / len(items)) if len(items) != 0 else 0
         day_productivity.total_produced = sum([item.qty_produced for item in items])
+        day_productivity.available_hours = day_productivity.people * 7.5 + day_productivity.extra_hours
+        day_productivity.productivity = round(day_productivity.earned_hours / day_productivity.available_hours * 100) if day_productivity.available_hours != 0 else 0
         day_productivity.save()
 
     context = {
