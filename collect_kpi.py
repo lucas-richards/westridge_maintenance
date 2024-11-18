@@ -210,6 +210,10 @@ class Command(BaseCommand):
         percentage = round(on_time / work_orders_excluding.count() * 100) if work_orders_excluding.count() else 0
         self.save_kpi2('Timing On Time', percentage)
 
+        # get the total of work orders and save it in workordersqty kpiwith todays date
+        work_orders_qty = WorkOrder.objects.all().count()
+        self.save_kpi2('WorkOrdersQty', work_orders_qty)
+
         self.stdout.write(self.style.SUCCESS('Successfully saved daily maintenance KPI values'))
 
                     

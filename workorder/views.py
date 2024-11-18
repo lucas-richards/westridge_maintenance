@@ -32,6 +32,7 @@ def dashboard(request):
         'three': 0,
         'more': 0,
     }
+    print(assets_workorders_count)
     for asset in assets:
         workorders_count = WorkOrder.objects.filter(asset=asset).count()
         if workorders_count == 0:
@@ -80,6 +81,8 @@ def dashboard(request):
     overdue_kpi = KPIValue.objects.filter(kpi__name='Overdue', date__gte=timezone.now() - datetime.timedelta(days=30)).order_by('date')
     overdue_kpi_values = [value.value for value in overdue_kpi]
     overdue_kpi_dates = [value.date.strftime('%m-%d-%Y') for value in overdue_kpi]
+    wordordersqty_kpi_values = [value.value for value in KPIValue.objects.filter(kpi__name='Work Orders Qty').order_by('date')]
+    wordordersqty_kpi_dates = [value.date.strftime('%m-%d-%Y') for value in KPIValue.objects.filter(kpi__name='Work Orders Qty').order_by('date')]
 
 
     context = {
@@ -94,6 +97,8 @@ def dashboard(request):
         'overdue_kpi_values': overdue_kpi_values,
         'overdue_kpi_dates': overdue_kpi_dates,
         'assets_workorders_count': assets_workorders_count,
+        'wordordersqty_kpi_values': wordordersqty_kpi_values,
+        'wordordersqty_kpi_dates': wordordersqty_kpi_dates,
         
     }
     return render(request, 'workorder/dashboard.html', context)
