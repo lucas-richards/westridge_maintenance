@@ -113,11 +113,6 @@
                     beginAtZero: true,
                     min: 0,
                     max: 100,
-                    // ticks: {
-                    //     callback: function(value) {
-                    //         return value + '%'; // add percentage sign 
-                    //     }
-                    // }
                 }
             },
             plugins: {
@@ -128,11 +123,10 @@
                     anchor: 'end',
                     align: 'top',
                     color: 'black',
-                    // add percentage sign to the va
-                //     formatter: function(value, context) {
-                //         return value + '%';
-                // }
-            }
+                    formatter: function(value, context) {
+                        return value + '    ';
+                }
+                }
             },
         }
     });
@@ -201,7 +195,7 @@
         data: {
             labels: {{ wordordersqty_kpi_dates|safe }},
             datasets: [{
-                label: 'Work Orders KPI',
+                label: 'Work Orders Qty',
                 data: {{ wordordersqty_kpi_values|safe }},
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                 borderColor: 'rgba(54, 162, 235, 1)',

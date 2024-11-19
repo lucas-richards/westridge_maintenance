@@ -212,7 +212,7 @@ class Command(BaseCommand):
 
         # get the total of work orders and save it in workordersqty kpiwith todays date
         work_orders_qty = WorkOrder.objects.all().count()
-        self.save_kpi2('WorkOrdersQty', work_orders_qty)
+        self.save_kpi2('Work Orders Qty', work_orders_qty)
 
         self.stdout.write(self.style.SUCCESS('Successfully saved daily maintenance KPI values'))
 
