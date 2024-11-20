@@ -2,7 +2,6 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from .models import Profile, Role
-from training.models import TrainingModule
 
 
 class UserRegisterForm(UserCreationForm):
@@ -46,28 +45,7 @@ class ProfileUpdateForm(forms.ModelForm):
         model = Profile
         fields = ['active','supervisor','roles']
 
-#  roles form with modules as checkboxes
-class RoleForm(forms.ModelForm):
-    training_modules = forms.ModelMultipleChoiceField(
-        queryset=TrainingModule.objects.all().order_by('name'),  # Replace 'Profile' with your actual model name
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
 
-    class Meta:
-        model = Role
-        fields = ['training_modules']
-
-class RoleUpdateForm(forms.ModelForm):
-    training_modules = forms.ModelMultipleChoiceField(
-        queryset=TrainingModule.objects.all().order_by('name'),
-        widget=forms.CheckboxSelectMultiple,
-        required=False
-    )
-
-    class Meta:
-        model = Role
-        fields = ['name','description','training_modules']
 
 # form to login with code, only enter username
 # form to login with code, only enter username

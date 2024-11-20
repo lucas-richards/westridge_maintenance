@@ -48,12 +48,8 @@ CORS_ALLOWED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
-    # 'rest_framework',
     'workorder.apps.WorkorderConfig',
-    'tasks.apps.TasksConfig',
-    'training.apps.TrainingConfig',
     'users.apps.UsersConfig',
-    'blog.apps.BlogConfig',
     'crispy_forms',
     'crispy_bootstrap4',
     'django.contrib.admin',
@@ -92,8 +88,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'blog.context_processors.all_users',
-                'blog.context_processors.all_profiles',
             ],
         },
     },

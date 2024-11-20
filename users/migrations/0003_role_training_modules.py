@@ -6,14 +6,9 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('training', '0003_remove_trainingmodule_roles'),
         ('users', '0002_alter_profile_supervisor'),
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='role',
-            name='training_modules',
-            field=models.ManyToManyField(blank=True, related_name='roles', to='training.trainingmodule'),
-        ),
+        
     ]

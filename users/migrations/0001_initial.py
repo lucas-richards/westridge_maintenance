@@ -10,7 +10,6 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('training', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -39,7 +38,6 @@ class Migration(migrations.Migration):
                 ('image', models.ImageField(default='profile_pics/default.webp', upload_to='profile_pics')),
                 ('department', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='users.department')),
                 ('supervisor', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='supervisor', to=settings.AUTH_USER_MODEL)),
-                ('training_modules', models.ManyToManyField(related_name='profiles', through='training.TrainingEvent', to='training.trainingmodule')),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
                 ('roles', models.ManyToManyField(blank=True, related_name='profiles', to='users.role')),
             ],

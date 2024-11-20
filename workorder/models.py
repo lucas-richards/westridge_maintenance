@@ -254,8 +254,20 @@ class PurchasePart(models.Model):
 class ProdItemStd(models.Model):
     sku = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
+    kind = models.CharField(
+        max_length=20,
+        choices=[
+            ('tube', 'Tube'),
+            ('foil', 'Foil'),
+            ('bottle', 'Bottle'),
+            ('replenishment', 'Replenishment'),
+        ],
+        null=False,
+        blank=False,
+        default='bottle',
+    )
     pph = models.IntegerField(null=True, blank=True)
-    people_inline = models.IntegerField(null=True, blank=True)
+    people_inline = models.FloatField(null=True, blank=True)
     setup_time = models.FloatField(null=True, blank=True)
     setup_people = models.IntegerField(null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -268,7 +280,7 @@ class ProdItemStd(models.Model):
 class ProdItem(models.Model):
     item = models.ForeignKey(ProdItemStd, on_delete=models.CASCADE)
     qty_produced = models.IntegerField(null=True, blank=True)
-    people_inline = models.IntegerField(null=True, blank=True)
+    people_inline = models.FloatField(null=True, blank=True)
     produced_time = models.FloatField(null=True, blank=True)
     setup_time = models.FloatField(null=True, blank=True)
     setup_people = models.IntegerField(null=True, blank=True)
@@ -290,6 +302,10 @@ class DayProductivity(models.Model):
     extra_hours = models.FloatField(null=True, blank=True)
     earned_hours = models.FloatField(null=True, blank=True)
     productivity = models.FloatField()
+    total_pieces_tube = models.IntegerField(null=True, blank=True)
+    total_pieces_foil = models.IntegerField(null=True, blank=True)
+    total_pieces_bottle = models.IntegerField(null=True, blank=True)
+    total_pieces_replenishment = models.IntegerField(null=True, blank=True)
     total_produced = models.IntegerField(null=True, blank=True)
 
     def __str__(self):

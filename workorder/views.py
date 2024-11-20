@@ -760,7 +760,7 @@ def productivity(request):
         item.std_hours = round(item.qty_produced * item.earned_hours_piece / item.item.people_inline, 1)
 
 
-    status_kpi_dates = [item.completed_date.strftime('%m-%d-%Y') for item in items][::-1]
+    status_kpi_dates = [item.item.sku for item in items][::-1]
     status_kpi_values = [item.productivity_total for item in items][::-1]
 
     # Get the corresponding DayProductivity object for the current date
@@ -768,12 +768,20 @@ def productivity(request):
     if current_date:
         day_productivity = DayProductivity.objects.filter(date=current_date).first()
         # update the day productivity bvalues like earned hours, productivity and pieces produced
-        day_productivity.earned_hours = sum([item.earned_hours_total for item in items])
+        day_productivity.earned_hours = round(sum([item.earned_hours_total for item in items]), 1)
         day_productivity.productivity_inline = round(sum([item.productivity_total for item in items]) / len(items)) if len(items) != 0 else 0
         day_productivity.total_produced = sum([item.qty_produced for item in items])
         day_productivity.available_hours = day_productivity.people * 7.5 + day_productivity.extra_hours
         day_productivity.productivity = round(day_productivity.earned_hours / day_productivity.available_hours * 100) if day_productivity.available_hours != 0 else 0
+        # if item std is kind bottle then add it to total pieces bottle
+        day_productivity.total_produced_bottle = sum([item.qty_produced for item in items if item.item.kind == 'bottle'])
+        day_productivity.total_produced_foil = sum([item.qty_produced for item in items if item.item.kind == 'foil'])
+        day_productivity.total_produced_tube = sum([item.qty_produced for item in items if item.item.kind == 'tube'])
+        day_productivity.total_produced_replenishment = sum([item.qty_produced for item in items if item.item.kind == 'replenishment'])
         day_productivity.save()
+
+        # print all day productivity values
+        print('day productivity', day_productivity.total_produced_bottle, day_productivity.total_produced_foil, day_productivity.total_produced_tube, day_productivity.total_produced_replenishment)
 
     context = {
         'title': 'Productivity',
