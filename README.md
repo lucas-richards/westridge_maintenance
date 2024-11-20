@@ -1,15 +1,14 @@
-# Westridge Laboratories App
+# Westridge Maintenance App
 
 ## Overview
-This application was created for a small business. Includes:
-  - Training Tracker
-  - Tasks
+This application was created to manage equipment maintenance and production productivity. Includes:
+  - Assets
+  - Work Orders
   - Reminders
-  - Birthday Tracker
-  - Company's Blog
+  - Dashboard with KPI's
+  - Productivity tracking
   ##### Coming up...
-  - File Management System
-  - Messaging
+  - Equipment parts inventory management
 
 ## Getting started
 ##### Recommended to use python virtual environment
@@ -21,26 +20,20 @@ run `python3 manage.py runserver`
 
 ## User Stories
 A detailed list of the functionality of your application, told through a user's perspective
-  - As a user, I want the ability to sign up.
-  - As a user, I want the ability to sign in. 
-  - As a user, I want the ability to change my password. 
-  - As a user, I want the ability to sign out. 
-  - As a user, I want the ability to create my own blogs. 
-  - As a user, I want the ability to update my posts. 
-  - As a user, I want the ability to view all of my posts. 
-  - As a user, I want the ability to read more details of others posts. 
-  - As a user, I want the ability to delete my posts. 
-  - As a user, I want the ability to view posts others have created. 
-  - As a user, I want the ability to favorite posts that other people have created. 
-  - As a user, I want the ability to read all of the posts I have favorited. 
-  - As a user, I want the ability to remove posts from my favorites.
+As a user, I want the ability to:
+  - sign up.
+  - sign in. 
+  - change my password. 
+  - sign out. 
+  - create my own assets. 
+  - update my assets. 
+  - view all of my assets. 
+  - read more details of assets WO. 
+  - delete assets. 
+  - enter production qtys and see productivity
 
 ## Wireframes / Screenshots
 Diagrams that display what your application will look like, and images from the completed app.
-![alt text](media/training_app.png)
-![alt text](media/tasks.png)
-![alt text](media/dashboard.png)
-![alt text](media/blog_app.png)
 ![alt text](media/login.png)
 ![alt text](media/register.png)
 ## Entity Relationship Diagrams 
