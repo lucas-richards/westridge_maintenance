@@ -639,21 +639,23 @@ def add_production_entry(request):
     if request.method == 'POST':
         items = ProdItemStd.objects.all()
         for i in range(1, len(items) + 1):
-            print(f'item{i}')
-            # print request
-            print(request.POST)
             item_id = request.POST.get(f'item{i}')
             qty = request.POST.get(f'qty{i}')
-            produced_time = request.POST.get(f'produced_in_time{i}')
+            start_time = request.POST.get(f'start_time{i}')
+            end_time = request.POST.get(f'end_time{i}')
+            break_minutes = request.POST.get(f'break_minutes{i}')
             people_inline = request.POST.get(f'people_inline{i}')
             setup_time = request.POST.get(f'setup_time{i}')
             setup_people = request.POST.get(f'setup_time_people{i}')
             completed_date = request.POST.get('completed_date')
 
-            if item_id and qty and produced_time and people_inline and completed_date:
+            if item_id and qty and start_time and end_time and break_minutes and people_inline and completed_date:
                 try:
                     qty = int(qty)
-                    produced_time = float(produced_time)
+                    start_time = timezone.datetime.strptime(start_time, '%H:%M')
+                    end_time = timezone.datetime.strptime(end_time, '%H:%M')
+                    break_minutes = int(break_minutes)
+                    produced_time = (end_time - start_time).total_seconds() / 3600 - (break_minutes / 60)  # Convert to hours and subtract break time
                     people_inline = int(people_inline)
                     setup_time = float(setup_time)
                     setup_people = int(setup_people)
@@ -670,15 +672,12 @@ def add_production_entry(request):
                     )
                 except ValueError:
                     messages.error(request, f'Invalid data for item {i}')
-            print(item_id, qty, produced_time, people_inline, setup_time, setup_people, completed_date)
-            # create a DayProduction object
             people = request.POST.get('people')
             extra_hours = request.POST.get('extra_hours') if request.POST.get('extra_hours') else 0
             if people:
                 try:
                     people = int(people)
                     extra_hours = float(extra_hours)
-                    # create a DayProduction object
                     day_productivity, created = DayProductivity.objects.get_or_create(
                         date=completed_date,
                         defaults={'people': people, 'extra_hours': extra_hours, 'productivity': 0}

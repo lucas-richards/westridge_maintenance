@@ -34,12 +34,12 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th style="width: 40%;">Item</th>
+                        <th style="width: 30%;">Item</th>
                         <th>Qty</th>
-                        <th>Produce Time</th>
-                        <th style="width: 10%;">Inline People</th>
+                        <th>Produce Time (Start-End-Break)</th>
+                        <th style="width: 8%;">Inline People</th>
                         <th>Setup Time</th>
-                        <th style="width: 10%;">Setup People</th>
+                        <th style="width: 8%;">Setup People</th>
                     </tr>
                 </thead>
                 <tbody id="items_table_body">
@@ -55,7 +55,11 @@
                             <input type="number" name="qty1" id="qty1" class="form-control" required>
                         </td>
                         <td>
-                            <input type="text" name="produced_in_time1" id="produced_in_time1" class="form-control" required>
+                            <div class="d-flex">
+                                <input type="time" name="start_time1" id="start_time1" class="form-control mr-2" value="07:00" required>
+                                <input type="time" name="end_time1" id="end_time1" class="form-control mr-2" value="15:30" required>
+                                <input type="number" name="break_minutes1" id="break_minutes1" class="form-control" value="45" placeholder="Break Minutes" required>
+                            </div>
                         </td>
                         <td>
                             <input type="number" name="people_inline1" id="people_inline1" class="form-control" required>
@@ -141,12 +145,35 @@
         qtyCell.appendChild(qtyInput);
 
         var producedInTimeCell = document.createElement("td");
-        var producedInTimeInput = document.createElement("input");
-        producedInTimeInput.type = "text";
-        producedInTimeInput.name = "produced_in_time" + itemCount;
-        producedInTimeInput.className = "form-control";
-        producedInTimeInput.required = true;
-        producedInTimeCell.appendChild(producedInTimeInput);
+        var producedInTimeDiv = document.createElement("div");
+        producedInTimeDiv.className = "d-flex";
+
+        var startTimeInput = document.createElement("input");
+        startTimeInput.type = "time";
+        startTimeInput.name = "start_time" + itemCount;
+        startTimeInput.className = "form-control mr-2";
+        startTimeInput.value = "07:00";
+        startTimeInput.required = true;
+
+        var endTimeInput = document.createElement("input");
+        endTimeInput.type = "time";
+        endTimeInput.name = "end_time" + itemCount;
+        endTimeInput.className = "form-control mr-2";
+        endTimeInput.value = "15:30";
+        endTimeInput.required = true;
+
+        var breakMinutesInput = document.createElement("input");
+        breakMinutesInput.type = "number";
+        breakMinutesInput.name = "break_minutes" + itemCount;
+        breakMinutesInput.className = "form-control";
+        breakMinutesInput.value = "45";
+        breakMinutesInput.placeholder = "Break Minutes";
+        breakMinutesInput.required = true;
+
+        producedInTimeDiv.appendChild(startTimeInput);
+        producedInTimeDiv.appendChild(endTimeInput);
+        producedInTimeDiv.appendChild(breakMinutesInput);
+        producedInTimeCell.appendChild(producedInTimeDiv);
 
         var peopleInlineCell = document.createElement("td");
         var peopleInlineInput = document.createElement("input");
