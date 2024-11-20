@@ -34,7 +34,7 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th style="width: 30%;">Item</th>
+                        <th style="width: 25%;">Item</th>
                         <th>Qty</th>
                         <th>Produce Time (Start-End-Break)</th>
                         <th style="width: 10%;">Inline People</th>
@@ -55,10 +55,18 @@
                                     var selectedOption = selectElement.options[selectElement.selectedIndex];
                                     var kind = selectedOption.getAttribute('data-kind');
                                     var inlinePeopleInput = document.getElementById('people_inline1');
+                                    var break_minutes = document.getElementById('break_minutes1');
                                     if (kind === 'foil') {
                                         inlinePeopleInput.value = 0.25;
-                                    } else {
+                                        break_minutes.value = 0;
+                                    } 
+                                    else if (kind === 'tube') {
                                         inlinePeopleInput.value = '';
+                                        break_minutes.value = 0;
+                                    }
+                                    else {
+                                        inlinePeopleInput.value = '';
+                                        break_minutes.value = 60; // Default break minutes
                                     }
                                 }
                             </script>
@@ -68,9 +76,9 @@
                         </td>
                         <td>
                             <div class="d-flex">
-                                <input type="time" name="start_time1" id="start_time1" class="form-control mr-2" value="07:00" required>
-                                <input type="time" name="end_time1" id="end_time1" class="form-control mr-2" value="15:30" required>
-                                <input type="number" name="break_minutes1" id="break_minutes1" class="form-control" value="45" placeholder="Break Minutes" required>
+                                <input type="time" name="start_time1" id="start_time1" class="form-control mr-2" value="07:05" required>
+                                <input type="time" name="end_time1" id="end_time1" class="form-control mr-2" value="15:15" required>
+                                <input type="number" name="break_minutes1" id="break_minutes1" class="form-control" value="60" placeholder="Break Minutes" required>
                             </div>
                         </td>
                         <td>
@@ -164,21 +172,21 @@
         startTimeInput.type = "time";
         startTimeInput.name = "start_time" + itemCount;
         startTimeInput.className = "form-control mr-2";
-        startTimeInput.value = "07:00";
+        startTimeInput.value = "07:05";
         startTimeInput.required = true;
 
         var endTimeInput = document.createElement("input");
         endTimeInput.type = "time";
         endTimeInput.name = "end_time" + itemCount;
         endTimeInput.className = "form-control mr-2";
-        endTimeInput.value = "15:30";
+        endTimeInput.value = "15:15";
         endTimeInput.required = true;
 
         var breakMinutesInput = document.createElement("input");
         breakMinutesInput.type = "number";
         breakMinutesInput.name = "break_minutes" + itemCount;
         breakMinutesInput.className = "form-control";
-        breakMinutesInput.value = "45";
+        breakMinutesInput.value = "60";
         breakMinutesInput.placeholder = "Break Minutes";
         breakMinutesInput.required = true;
 
