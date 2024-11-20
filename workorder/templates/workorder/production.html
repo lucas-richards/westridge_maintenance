@@ -37,7 +37,7 @@
                         <th style="width: 30%;">Item</th>
                         <th>Qty</th>
                         <th>Produce Time (Start-End-Break)</th>
-                        <th style="width: 8%;">Inline People</th>
+                        <th style="width: 10%;">Inline People</th>
                         <th>Setup Time</th>
                         <th style="width: 8%;">Setup People</th>
                     </tr>
@@ -45,11 +45,23 @@
                 <tbody id="items_table_body">
                     <tr>
                         <td>
-                            <select name="item1" id="item1" class="form-control">
+                            <select name="item1" id="item1" class="form-control" onchange="setDefaultInlinePeople(this)">
                                 {% for item in items %}
-                                    <option value="{{ item.id }}">{{ item }}</option>
+                                    <option value="{{ item.id }}" data-kind="{{ item.kind }}">{{ item }}</option>
                                 {% endfor %}
                             </select>
+                            <script>
+                                function setDefaultInlinePeople(selectElement) {
+                                    var selectedOption = selectElement.options[selectElement.selectedIndex];
+                                    var kind = selectedOption.getAttribute('data-kind');
+                                    var inlinePeopleInput = document.getElementById('people_inline1');
+                                    if (kind === 'foil') {
+                                        inlinePeopleInput.value = 0.25;
+                                    } else {
+                                        inlinePeopleInput.value = '';
+                                    }
+                                }
+                            </script>
                         </td>
                         <td>
                             <input type="number" name="qty1" id="qty1" class="form-control" required>
