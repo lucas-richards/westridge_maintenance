@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
 import json
-from .forms import AssetEditForm, WorkOrderEditForm, WorkOrderRecordForm, WorkOrderRecordEditForm, AssetWorkOrderNewForm
+from .forms import AssetEditForm, WorkOrderEditForm, WorkOrderRecordForm, WorkOrderRecordEditForm, AssetWorkOrderNewForm, ProdItemStdForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -791,3 +791,44 @@ def productivity(request):
         'day_productivity': day_productivity,
     }
     return render(request, 'workorder/productivity.html', context)
+
+
+@login_required
+# this view will show all the item standards in a form so you can update them
+def standards(request):
+    items = ProdItemStd.objects.all().order_by('sku')
+    if request.method == 'POST':
+        for item in items:
+            item.sku = request.POST.get(f'sku_{item.id}')
+            item.name = request.POST.get(f'name_{item.id}')
+            item.kind = request.POST.get(f'kind_{item.id}')
+            item.pphp = request.POST.get(f'pphp_{item.id}')
+            item.people_inline = request.POST.get(f'people_inline_{item.id}')
+            item.setup_time = request.POST.get(f'setup_time_{item.id}')
+            item.setup_people = request.POST.get(f'setup_people_{item.id}')
+            item.save()
+        messages.success(request, 'Item standards updated successfully')
+        return redirect('workorder-standards')
+    context = {
+        'title': 'Standards',
+        'items': items,
+    }
+    return render(request, 'workorder/standards.html', context)
+
+@login_required
+# update standard
+def update_standard(request, id):
+    item = ProdItemStd.objects.get(id=id)
+    if request.method == 'POST':
+        form = ProdItemStdForm(request.POST, instance=item)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Item standard updated successfully')
+            return redirect('workorder-standards')
+    else:
+        form = ProdItemStdForm(instance=item)
+    context = {
+        'title': 'Update Standard',
+        'form': form,
+    }
+    return render(request, 'workorder/update_standard.html', context)

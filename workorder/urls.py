@@ -28,5 +28,7 @@ urlpatterns = [
     path('production/', views.production, name='workorder-production'),
     path('add_production_entry/', views.add_production_entry, name='workorder-add-production-entry'),
     path('productivity/', views.productivity, name='workorder-productivity'),
+    path('standards/', views.standards, name='workorder-standards'),
+    path('standard/<int:id>/', views.update_standard, name='workorder-update-standard'),
     
 ]

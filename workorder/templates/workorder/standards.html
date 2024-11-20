@@ -1,0 +1,44 @@
+{% extends "workorder/tabs_nav.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+{% if user.is_authenticated %}
+
+<!-- table for each item standard -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>SKU</th>
+            <th>Description</th>
+            <th>Kind</th>
+            <th>PPH</th>
+            <th>People Inline</th>
+            <th>Setup Time</th>
+            <th>Setup People</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.sku }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.get_kind_display }}</td>
+            <td>{{ item.pph }}</td>
+            <td>{{ item.people_inline }}</td>
+            <td>{{ item.setup_time }}</td>
+            <td>{{ item.setup_people }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+                
+
+        
+    
+
+
+
+{% endif %}
+
+{% endblock content %}

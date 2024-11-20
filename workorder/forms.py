@@ -1,5 +1,5 @@
 from django import forms
-from workorder.models import Asset, Vendor, WorkOrder, WorkOrderRecord, STATUS, STATUS2, CRITICALITY_CHOICES
+from workorder.models import Asset, Vendor, WorkOrder, WorkOrderRecord, STATUS, STATUS2, CRITICALITY_CHOICES, ProdItemStd
 from users.models import Department, User
 
 
@@ -65,4 +65,20 @@ class WorkOrderRecordEditForm(forms.ModelForm):
             'status': forms.Select(choices=STATUS),
             'completed_on': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }
+
+# form to update standard item 
+class ProdItemStdForm(forms.ModelForm):
+    class Meta:
+        model = ProdItemStd
+        fields = ['sku', 'description', 'kind', 'pph', 'people_inline', 'setup_time', 'setup_people']
+        widgets = {
+            'kind': forms.Select(choices=[
+                ('tube', 'Tube'),
+                ('foil', 'Foil'),
+                ('bottle', 'Bottle'),
+                ('replenishment', 'Replenishment'),
+            ]),
+        }
+
+
 
