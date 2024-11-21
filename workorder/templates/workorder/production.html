@@ -19,7 +19,7 @@
             <!-- smount of people -->
             <div class="form-group mr-4">
                 <label for="people_inline">People Inline:</label>
-                <input style="max-width: 100px;" type="number" id="people_inline" name="people" class="form-control">
+                <input style="max-width: 100px;" type="number" id="people_inline" name="people" class="form-control" required>
             </div>
             <!-- extra hours -->
             <div class="form-group">
@@ -46,6 +46,7 @@
                     <tr>
                         <td>
                             <select name="item1" id="item1" class="form-control" onchange="setDefaultInlinePeople(this)">
+                                <option value="" selected>Select an item</option>
                                 {% for item in items %}
                                     <option value="{{ item.id }}" data-kind="{{ item.kind }}">{{ item }}</option>
                                 {% endfor %}
@@ -59,10 +60,14 @@
                                     if (kind === 'foil') {
                                         inlinePeopleInput.value = 0.25;
                                         break_minutes.value = 0;
+                                        document.getElementById('start_time1').value = '07:00';
+                                        document.getElementById('end_time1').value = '15:30';
                                     } 
                                     else if (kind === 'tube') {
                                         inlinePeopleInput.value = '';
                                         break_minutes.value = 0;
+                                        document.getElementById('start_time1').value = '07:00';
+                                        document.getElementById('end_time1').value = '15:30';
                                     }
                                     else {
                                         inlinePeopleInput.value = '';
@@ -148,10 +153,18 @@
         var itemSelect = document.createElement("select");
         itemSelect.className = "form-control";
         itemSelect.name = "item" + itemCount; // Ensure this is unique if multiple divs are added
+        itemSelect.id = "item" + itemCount;
+        itemSelect.setAttribute("onchange", "setDefaultInlinePeople(this)");
+        var defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.text = "Select an item";
+        defaultOption.selected = true;
+        itemSelect.appendChild(defaultOption);
         {% for item in items %}
             var option = document.createElement("option");
             option.value = "{{ item.id }}";
             option.text = "{{ item }}";
+            option.setAttribute("data-kind", "{{ item.kind }}");
             itemSelect.appendChild(option);
         {% endfor %}
         itemCell.appendChild(itemSelect);
@@ -171,6 +184,7 @@
         var startTimeInput = document.createElement("input");
         startTimeInput.type = "time";
         startTimeInput.name = "start_time" + itemCount;
+        startTimeInput.id = "start_time" + itemCount;
         startTimeInput.className = "form-control mr-2";
         startTimeInput.value = "07:05";
         startTimeInput.required = true;
@@ -178,6 +192,7 @@
         var endTimeInput = document.createElement("input");
         endTimeInput.type = "time";
         endTimeInput.name = "end_time" + itemCount;
+        endTimeInput.id = "end_time" + itemCount;
         endTimeInput.className = "form-control mr-2";
         endTimeInput.value = "15:15";
         endTimeInput.required = true;
@@ -185,6 +200,7 @@
         var breakMinutesInput = document.createElement("input");
         breakMinutesInput.type = "number";
         breakMinutesInput.name = "break_minutes" + itemCount;
+        breakMinutesInput.id = "break_minutes" + itemCount;
         breakMinutesInput.className = "form-control";
         breakMinutesInput.value = "60";
         breakMinutesInput.placeholder = "Break Minutes";
@@ -199,6 +215,7 @@
         var peopleInlineInput = document.createElement("input");
         peopleInlineInput.type = "number";
         peopleInlineInput.name = "people_inline" + itemCount;
+        peopleInlineInput.id = "people_inline" + itemCount;
         peopleInlineInput.className = "form-control";
         peopleInlineInput.required = true;
         peopleInlineCell.appendChild(peopleInlineInput);
@@ -239,6 +256,30 @@
 
         tableBody.appendChild(newRow);
     });
+
+    function setDefaultInlinePeople(selectElement) {
+        var selectedOption = selectElement.options[selectElement.selectedIndex];
+        var kind = selectedOption.getAttribute('data-kind');
+        var itemCount = selectElement.name.replace('item', '');
+        var inlinePeopleInput = document.getElementById('people_inline' + itemCount);
+        var break_minutes = document.getElementById('break_minutes' + itemCount);
+        if (kind === 'foil') {
+            inlinePeopleInput.value = 0.25;
+            break_minutes.value = 0;
+            document.getElementById('start_time' + itemCount).value = '07:00';
+            document.getElementById('end_time' + itemCount).value = '15:30';
+        } 
+        else if (kind === 'tube') {
+            inlinePeopleInput.value = '';
+            break_minutes.value = 0;
+            document.getElementById('start_time' + itemCount).value = '07:00';
+            document.getElementById('end_time' + itemCount).value = '15:30';
+        }
+        else {
+            inlinePeopleInput.value = '';
+            break_minutes.value = 60; // Default break minutes
+        }
+    }
 </script>
 
 {% endif %}

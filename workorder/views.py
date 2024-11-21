@@ -655,7 +655,7 @@ def add_production_entry(request):
                     start_time = timezone.datetime.strptime(start_time, '%H:%M')
                     end_time = timezone.datetime.strptime(end_time, '%H:%M')
                     break_minutes = int(break_minutes)
-                    produced_time = (end_time - start_time).total_seconds() / 3600 - (break_minutes / 60)  # Convert to hours and subtract break time
+                    produced_time = round((end_time - start_time).total_seconds() / 3600 - (break_minutes / 60), 1)  # Convert to hours and subtract break time
                     people_inline = int(people_inline)
                     setup_time = float(setup_time)
                     setup_people = int(setup_people)
@@ -780,7 +780,7 @@ def productivity(request):
         # calculate bottle productivity by doinw the average of each bottle productivity
         day_productivity.productivity_bottle = round(sum([item.productivity_total for item in items if item.item.kind == 'bottle']) / len([item for item in items if item.item.kind == 'bottle'])) if len([item for item in items if item.item.kind == 'bottle']) != 0 else 0
         # calculate tube productivity by doinw the average of each tube productivity
-        day_productivity.productivity_tube = round(sum([item.productivity_total for item in items if item.item.kind == 'tube']) / len([item for item in items if item.item.kind == 'tube'])) if len([item for item in items if item.item.kind == 'tube']) != 0 else 0
+        day_productivity.productivity_tube = round(sum([item.earned_hours_total for item in items if item.item.kind == 'tube']) / 8*100) if len([item for item in items if item.item.kind == 'tube']) != 0 else 0
         # calculate replenishment productivity by doinw the average of each replenishment productivity
         day_productivity.productivity_replenishment = round(sum([item.productivity_total for item in items if item.item.kind == 'replenishment']) / len([item for item in items if item.item.kind == 'replenishment'])) if len([item for item in items if item.item.kind == 'replenishment']) != 0 else 0
         # calculate foil productivity by summing all foil earned hours and divided by 8
