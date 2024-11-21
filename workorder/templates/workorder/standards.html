@@ -8,13 +8,14 @@
 <table class="table table-hover m-4 p-4">
     <thead>
         <tr>
-            <th>SKU</th>
-            <th>Description</th>
-            <th>Kind</th>
-            <th>PPH</th>
+            <th style="width: 15%;">SKU</th>
+            <th style="width: 35%;">Description</th>
+            <th style="width: 10%;">Kind</th>
+            <th style="width: 10%;">PPH</th>
             <th>People Inline</th>
             <th>Setup Time</th>
             <th>Setup People</th>
+            <th>Line Setup</th>
         </tr>
     </thead>
     <tbody>
@@ -27,6 +28,16 @@
             <td>{{ item.people_inline }}</td>
             <td>{{ item.setup_time }}</td>
             <td>{{ item.setup_people }}</td>
+            <!-- if it has an image then green tick -->
+            {% if item.image %}
+            <td class="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="20" height="20">
+                    <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/>
+                </svg>
+            </td>
+            {% else %}
+            <td></td>
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>

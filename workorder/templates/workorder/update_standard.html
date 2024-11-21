@@ -4,6 +4,8 @@
 
 {% if user.is_authenticated %}
 
+
+
 <!-- form to update standar using django forms -->
 <form method="post" class="m-4" action="{% url 'workorder-update-standard' item.id %}">
     {% csrf_token %}
@@ -16,6 +18,13 @@
     </div>
     <button type="submit" class="btn btn-primary">Update</button>
 </form>
+
+<!-- if image then show it -->
+{% if item.image %}
+    <div class="text-center my-4">
+        <img src="{{ item.image.url }}" class="img-fluid rounded shadow" alt="Image">
+    </div>
+{% endif %}
 
 <script>
     // make description field with id id_description smaller

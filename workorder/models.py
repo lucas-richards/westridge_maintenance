@@ -270,6 +270,7 @@ class ProdItemStd(models.Model):
     people_inline = models.FloatField(null=True, blank=True)
     setup_time = models.FloatField(null=True, blank=True)
     setup_people = models.IntegerField(null=True, blank=True)
+    image = models.ImageField(upload_to='prod_item_images/', null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)

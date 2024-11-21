@@ -70,7 +70,7 @@ class WorkOrderRecordEditForm(forms.ModelForm):
 class ProdItemStdForm(forms.ModelForm):
     class Meta:
         model = ProdItemStd
-        fields = ['sku', 'description', 'kind', 'pph', 'people_inline', 'setup_time', 'setup_people']
+        fields = ['sku', 'description', 'kind', 'pph', 'people_inline', 'setup_time', 'setup_people', 'image']
         widgets = {
             'kind': forms.Select(choices=[
                 ('tube', 'Tube'),
