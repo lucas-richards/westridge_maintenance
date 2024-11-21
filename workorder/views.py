@@ -829,6 +829,7 @@ def update_standard(request, id):
         form = ProdItemStdForm(instance=item)
     context = {
         'title': 'Update Standard',
+        'item': item,
         'form': form,
     }
     return render(request, 'workorder/update_standard.html', context)
