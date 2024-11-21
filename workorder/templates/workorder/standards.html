@@ -4,6 +4,9 @@
 
 {% if user.is_authenticated %}
 
+<div class="d-flex justify-content-center my-4">
+    <input type="text" id="searchBox" class="form-control text-center" placeholder="Search Record" style="width: 50%;" oninput="filterskus()">
+</div>
 <!-- table for each item standard -->
 <table class="table table-hover m-4 p-4">
     <thead>
@@ -20,7 +23,7 @@
     </thead>
     <tbody>
         {% for item in items %}
-        <tr>
+        <tr class="sku">
             <td><a href="{% url 'workorder-update-standard' item.id %}">{{ item.sku }}</a></td>
             <td>{{ item.description }}</td>
             <td>{{ item.get_kind_display }}</td>
@@ -43,7 +46,40 @@
     </tbody>
 </table>
 
-                
+<script>
+    function filterskus() {
+        
+    var input = document.getElementById("searchBox");
+    var filter = input.value.toUpperCase().trim();
+    var skus = document.getElementsByClassName("sku");
+    var firstVisiblesku = null;
+
+    for (var i = 0; i < skus.length; i++) {
+        var sku = skus[i];
+        var skuText = sku.innerText.toUpperCase().trim();
+
+        if (skuText.indexOf(filter) > -1) {
+            sku.style.display = "";
+            if (!firstVisiblesku) {
+                firstVisiblesku = sku;
+            }
+        } else {
+            sku.style.display = "none";
+        }
+    }
+
+    // Automatically click the first visible sku if it exists
+    if (firstVisiblesku) {
+        const workorderItem = firstVisiblesku.querySelector('.workorder-item');
+        if (workorderItem) {
+            workorderItem.click();
+        }
+    }
+    
+    
+}
+    
+</script>                
 
         
     

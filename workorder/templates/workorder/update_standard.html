@@ -4,36 +4,39 @@
 
 {% if user.is_authenticated %}
 
+    <!-- form to update standard using django forms -->
+    <form method="post" class="m-4" action="{% url 'workorder-update-standard' item.id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-row">
+            {% for field in form %}
+                <div class="form-group col-md-6">
+                    {{ field|as_crispy_field }}
+                </div>
+            {% endfor %}
+        </div>
+        {% if user.username == 'ivis_beza' %}
+            <script>
+                // Disable all form fields
+                document.querySelectorAll('form input, form select, form textarea').forEach(function(element) {
+                    element.disabled = true;
+                });
+            </script>
+        {% else %}
+            <button type="submit" class="btn btn-primary">Update</button>
+        {% endif %}
+    </form>
 
+    <!-- if image then show it -->
+    {% if item.image %}
+        <div class="text-center my-4">
+            <img src="{{ item.image.url }}" class="img-fluid rounded shadow" alt="Image">
+        </div>
+    {% endif %}
 
-<!-- form to update standar using django forms -->
-<form method="post" class="m-4" action="{% url 'workorder-update-standard' item.id %}">
-    {% csrf_token %}
-    <div class="form-row">
-        {% for field in form %}
-            <div class="form-group col-md-6">
-                {{ field|as_crispy_field }}
-            </div>
-        {% endfor %}
-    </div>
-    <button type="submit" class="btn btn-primary">Update</button>
-</form>
-
-<!-- if image then show it -->
-{% if item.image %}
-    <div class="text-center my-4">
-        <img src="{{ item.image.url }}" class="img-fluid rounded shadow" alt="Image">
-    </div>
-{% endif %}
-
-<script>
-    // make description field with id id_description smaller
-    document.getElementById('id_description').style.height = '70px';
-</script>
-
-        
-    
-
+    <script>
+        // make description field with id id_description smaller
+        document.getElementById('id_description').style.height = '70px';
+    </script>
 
 
 {% endif %}

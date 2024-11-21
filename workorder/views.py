@@ -796,7 +796,7 @@ def productivity(request):
 @login_required
 # this view will show all the item standards in a form so you can update them
 def standards(request):
-    items = ProdItemStd.objects.all().order_by('sku')
+    items = ProdItemStd.objects.all().order_by('-pph')
     if request.method == 'POST':
         for item in items:
             item.sku = request.POST.get(f'sku_{item.id}')
@@ -820,7 +820,7 @@ def standards(request):
 def update_standard(request, id):
     item = ProdItemStd.objects.get(id=id)
     if request.method == 'POST':
-        form = ProdItemStdForm(request.POST, instance=item)
+        form = ProdItemStdForm(request.POST, request.FILES, instance=item)
         if form.is_valid():
             form.save()
             messages.success(request, 'Item standard updated successfully')
