@@ -252,7 +252,7 @@ class PurchasePart(models.Model):
             
 
 class ProdItemStd(models.Model):
-    sku = models.CharField(max_length=255)
+    sku = models.CharField(max_length=255, unique=True)
     description = models.TextField(null=True, blank=True)
     kind = models.CharField(
         max_length=20,
@@ -302,11 +302,15 @@ class DayProductivity(models.Model):
     people = models.IntegerField(null=True, blank=True)
     extra_hours = models.FloatField(null=True, blank=True)
     earned_hours = models.FloatField(null=True, blank=True)
-    productivity = models.FloatField()
     total_pieces_tube = models.IntegerField(null=True, blank=True)
     total_pieces_foil = models.IntegerField(null=True, blank=True)
     total_pieces_bottle = models.IntegerField(null=True, blank=True)
     total_pieces_replenishment = models.IntegerField(null=True, blank=True)
+    tube_productivity = models.FloatField(null=True, blank=True)
+    foil_productivity = models.FloatField(null=True, blank=True)
+    bottle_productivity = models.FloatField(null=True, blank=True)
+    replenishment_productivity = models.FloatField(null=True, blank=True)
+    productivity = models.FloatField()
     total_produced = models.IntegerField(null=True, blank=True)
 
     def __str__(self):

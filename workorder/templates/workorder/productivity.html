@@ -43,19 +43,35 @@
                 </div>
             </div>
         </div>
-        <div class="card" style="flex: 1; margin: 0 5px;">
+        <div class="card" style="flex: 1; margin: 0 5px;max-width: 200px;">
+            <div class="card-body text-center">
+                <h5 class="card-title">Productivity</h5>
+                <div class="row">
+                    <div class="col-2">
+                        
+                    </div>
+                    <div class="col-10">
+                        <p class="card-text mb-1 mr-4 text-right"><strong>{{day_productivity.productivity_bottle}}%</strong></p>
+                        <p class="card-text mb-1 mr-4 text-right"><strong>{{day_productivity.productivity_replenishment}}%</strong></p>
+                        <p class="card-text mb-1 mr-4 text-right"><strong>{{day_productivity.productivity_foil}}%</strong></p>
+                        <p class="card-text mb-1 mr-4 text-right"><strong>{{day_productivity.productivity_tube}}%</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card" style="flex: 1; margin: 0 5px;max-width: 200px;">
             <div class="card-body text-center">
             <h5 class="card-title">Earned Hours</h5>
             <h1 class="card-text pt-4">{{ day_productivity.earned_hours }}</h1>
             </div>
         </div>
-        <div class="card" style="flex: 1; margin: 0 5px;">
+        <div class="card" style="flex: 1; margin: 0 5px; max-width: 200px;">
             <div class="card-body text-center">
             <h5 class="card-title">Available Hours</h5>
             <h1 class="card-text pt-4">{{ day_productivity.available_hours }}</h1>
             </div>
         </div>
-        <div class="card" style="flex: 1; margin: 0 5px;">
+        <div class="card" style="flex: 1; margin: 0 5px;max-width: 200px;">
             <div class="card-body text-center">
             <h5 class="card-title">Daily Productivity</h5>
             <h1 class="card-text pt-4">{{day_productivity.productivity}}%</h1>
@@ -90,7 +106,7 @@
                 <th>Setup Earned Hours</th>
                 <th>Setup Prod</th>
                 <th>Total Prod</th>
-                <th>Completed Date</th>
+                <th>Type</th>
             </tr>
         </thead>
         <tbody>
@@ -138,7 +154,7 @@
                 <td>
                     {{ item.productivity_total }}%
                 </td>
-                <td>{{ item.completed_date }}</td>
+                <td>{{ item.item.kind }}</td>
             </tr>
             {% endfor %}
         </tbody>

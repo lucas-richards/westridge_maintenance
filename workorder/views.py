@@ -777,11 +777,18 @@ def productivity(request):
         day_productivity.total_produced_foil = sum([item.qty_produced for item in items if item.item.kind == 'foil'])
         day_productivity.total_produced_tube = sum([item.qty_produced for item in items if item.item.kind == 'tube'])
         day_productivity.total_produced_replenishment = sum([item.qty_produced for item in items if item.item.kind == 'replenishment'])
+        # calculate bottle productivity by doinw the average of each bottle productivity
+        day_productivity.productivity_bottle = round(sum([item.productivity_total for item in items if item.item.kind == 'bottle']) / len([item for item in items if item.item.kind == 'bottle'])) if len([item for item in items if item.item.kind == 'bottle']) != 0 else 0
+        # calculate tube productivity by doinw the average of each tube productivity
+        day_productivity.productivity_tube = round(sum([item.productivity_total for item in items if item.item.kind == 'tube']) / len([item for item in items if item.item.kind == 'tube'])) if len([item for item in items if item.item.kind == 'tube']) != 0 else 0
+        # calculate replenishment productivity by doinw the average of each replenishment productivity
+        day_productivity.productivity_replenishment = round(sum([item.productivity_total for item in items if item.item.kind == 'replenishment']) / len([item for item in items if item.item.kind == 'replenishment'])) if len([item for item in items if item.item.kind == 'replenishment']) != 0 else 0
+        # calculate foil productivity by summing all foil earned hours and divided by 8
+        day_productivity.productivity_foil = round(sum([item.earned_hours_total for item in items if item.item.kind == 'foil']) / 8*100) if len([item for item in items if item.item.kind == 'foil']) != 0 else 0
+       
         day_productivity.save()
 
-        # print all day productivity values
-        print('day productivity', day_productivity.total_produced_bottle, day_productivity.total_produced_foil, day_productivity.total_produced_tube, day_productivity.total_produced_replenishment)
-
+     
     context = {
         'title': 'Productivity',
         'items': items,
