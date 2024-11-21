@@ -2,6 +2,8 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
+
+
 {% if user.is_authenticated %}
 
 <!-- create two columns -->
@@ -26,31 +28,23 @@
     <div class="mb-3 d-flex justify-content-around">
         <div class="card" style="flex: 1; margin: 0 10px;">
             <div class="card-body text-center">
-                <h5 class="card-title">Pieces Produced</h5>
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-4">
+                        <h5 class="card-title">Type </h5>
                         <p class="card-text mb-1 ml-4 text-left">Bottles</p>
                         <p class="card-text mb-1 ml-4 text-left">Repl.</p>
                         <p class="card-text mb-1 ml-4 text-left">Foils</p>
                         <p class="card-text mb-1 ml-4 text-left">Tubes</p>
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
+                        <h5 class="card-title">Pieces</h5>
                         <p class="card-text mb-1 mr-4 text-right"><strong>{{day_productivity.total_produced_bottle}}</strong></p>
                         <p class="card-text mb-1 mr-4 text-right"><strong>{{day_productivity.total_produced_replenishment}}</strong></p>
                         <p class="card-text mb-1 mr-4 text-right"><strong>{{day_productivity.total_produced_foil}}</strong></p>
                         <p class="card-text mb-1 mr-4 text-right"><strong>{{day_productivity.total_produced_tube}}</strong></p>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="card" style="flex: 1; margin: 0 10px;max-width: 220px;">
-            <div class="card-body text-center">
-                <h5 class="card-title">Productivity</h5>
-                <div class="row">
-                    <div class="col-2">
-                        
-                    </div>
-                    <div class="col-10">
+                    <div class="col-4">
+                        <h5 class="card-title">Productivity</h5>
                         <p class="card-text mb-1 mr-4 text-right"><strong>{{day_productivity.productivity_bottle}}%</strong></p>
                         <p class="card-text mb-1 mr-4 text-right"><strong>{{day_productivity.productivity_replenishment}}%</strong></p>
                         <p class="card-text mb-1 mr-4 text-right"><strong>{{day_productivity.productivity_foil}}%</strong></p>
@@ -59,6 +53,7 @@
                 </div>
             </div>
         </div>
+       
         <div class="card" style="flex: 1; margin: 0 10px;max-width: 220px;">
             <div class="card-body text-center">
             <h5 class="card-title">Earned Hours</h5>
@@ -95,6 +90,7 @@
         <thead class="">
             <tr>
                 <th>Item</th>
+                <th>Type</th>
                 <th>Qty</th>
                 <th>PPH</th>
                 <th>Hrs To Prod</th>
@@ -106,16 +102,16 @@
                 <th>Setup Earned Hours</th>
                 <th>Setup Prod</th>
                 <th>Total Prod</th>
-                <th>Type</th>
             </tr>
         </thead>
         <tbody>
             {% for item in items %}
             <tr>
-                <td style="max-width: 230px;" class="text-truncate">
+                <td style="max-width: 300px;" class="text-truncate">
                     {{ item.item }}<br>
                     <small class="text-secondary"><i>Std</i></small>
                 </td>
+                <td>{{ item.item.kind }}</td>
                 <td>
                     {{ item.qty_produced }}
                 </td>
@@ -154,7 +150,6 @@
                 <td>
                     {{ item.productivity_total }}%
                 </td>
-                <td>{{ item.item.kind }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -187,7 +182,7 @@
             },
             {
                 label: 'Goal',
-                data: new Array({{ status_kpi_dates|length }}).fill(80),
+                data: new Array({{ status_kpi_dates|length }}).fill(95),
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
                 borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 1,
