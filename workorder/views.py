@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import redirect
 import json
-from .forms import AssetEditForm, WorkOrderEditForm, WorkOrderRecordForm, WorkOrderRecordEditForm, AssetWorkOrderNewForm, ProdItemStdForm
+from .forms import AssetEditForm, WorkOrderEditForm, WorkOrderRecordForm, WorkOrderRecordEditForm, AssetWorkOrderNewForm, ProdItemStdForm, ProdItemForm, DayProductivityForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
@@ -840,3 +840,39 @@ def update_standard(request, id):
         'form': form,
     }
     return render(request, 'workorder/update_standard.html', context)
+
+@login_required
+def update_item(request, id):
+    item = ProdItem.objects.get(id=id)
+    if request.method == 'POST':
+        form = ProdItemForm(request.POST, request.FILES, instance=item)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Item updated successfully')
+            return redirect('workorder-productivity')
+    else:
+        form = ProdItemForm(instance=item)
+    context = {
+        'title': 'Update Item',
+        'item': item,
+        'form': form,
+    }
+    return render(request, 'workorder/update_item.html', context)
+
+@login_required
+def update_day(request, id):
+    day_productivity = DayProductivity.objects.get(id=id)
+    if request.method == 'POST':
+        form = DayProductivityForm(request.POST, request.FILES, instance=day_productivity)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Day productivity updated successfully')
+            return redirect('workorder-productivity')
+    else:
+        form = DayProductivityForm(instance=day_productivity)
+    context = {
+        'title': 'Update Day Productivity',
+        'day_productivity': day_productivity,
+        'form': form,
+    }
+    return render(request, 'workorder/update_day.html', context)

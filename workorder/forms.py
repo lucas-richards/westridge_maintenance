@@ -1,5 +1,5 @@
 from django import forms
-from workorder.models import Asset, Vendor, WorkOrder, WorkOrderRecord, STATUS, STATUS2, CRITICALITY_CHOICES, ProdItemStd
+from workorder.models import Asset, Vendor, WorkOrder, WorkOrderRecord, STATUS, STATUS2, CRITICALITY_CHOICES, ProdItemStd, ProdItem, DayProductivity
 from users.models import Department, User
 
 
@@ -80,5 +80,22 @@ class ProdItemStdForm(forms.ModelForm):
             ]),
         }
 
+class ProdItemForm(forms.ModelForm):
+    class Meta:
+        model = ProdItem
+        fields = ['item', 'qty_produced', 'people_inline', 'produced_time', 'setup_time', 'setup_people', 'completed_date']
+        widgets = {
+            'completed_date': forms.DateTimeInput(attrs={'type': 'datetime-local'})
+        }
 
 
+class DayProductivityForm(forms.ModelForm):
+    class Meta:
+        model = DayProductivity  
+        fields = [
+            'people', 'extra_hours'
+        ]
+        widgets = {
+            'productivity': forms.NumberInput(attrs={'step': '0.01'}),
+            'extra_hours': forms.NumberInput(attrs={'step': '0.01'}),
+        }

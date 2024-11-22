@@ -23,7 +23,7 @@
     {% endif %}
 </div>
 <div class="mt-5 p-3 card " >
-    <h4 class="mb-4"><strong>{{day_productivity.date}} Values</strong></h4>
+    <h4 class="mb-4"><strong><a href="{% url 'workorder-update-day' day_productivity.id %}">{{day_productivity.date}}</a> Values</strong></h4>
     <!-- nice percetages cards next to each other -->
     <div class="mb-3 d-flex justify-content-around">
         <div class="card" style="flex: 1; margin: 0 10px;">
@@ -108,7 +108,7 @@
             {% for item in items %}
             <tr>
                 <td style="max-width: 300px;" class="text-truncate">
-                    {{ item.item }}<br>
+                    <a href="{% url 'workorder-update-item' item.id %}">{{ item.item }}</a> <br>
                     <small class="text-secondary"><i>Std</i></small>
                 </td>
                 <td>{{ item.item.kind }}</td>

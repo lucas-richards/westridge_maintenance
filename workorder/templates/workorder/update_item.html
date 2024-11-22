@@ -1,0 +1,38 @@
+{% extends "workorder/tabs_nav.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+{% if user.is_authenticated %}
+
+    <!-- form to update standard using django forms -->
+    <form method="post" class="m-4" action="{% url 'workorder-update-item' item.id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-row">
+            {% for field in form %}
+                <div class="form-group col-md-6">
+                    {{ field|as_crispy_field }}
+                </div>
+            {% endfor %}
+        </div>
+        {% if user.username == 'ivis_beza' %}
+            <script>
+                // Disable all form fields
+                document.querySelectorAll('form input, form select, form textarea').forEach(function(element) {
+                    element.disabled = true;
+                });
+            </script>
+        {% else %}
+            <button type="submit" class="btn btn-primary">Update</button>
+        {% endif %}
+    </form>
+
+
+    <script>
+        // make description field with id id_description smaller
+        document.getElementById('id_description').style.height = '70px';
+    </script>
+
+
+{% endif %}
+
+{% endblock content %}
