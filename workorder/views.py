@@ -656,7 +656,7 @@ def add_production_entry(request):
                     end_time = timezone.datetime.strptime(end_time, '%H:%M')
                     break_minutes = int(break_minutes)
                     produced_time = round((end_time - start_time).total_seconds() / 3600 - (break_minutes / 60), 1)  # Convert to hours and subtract break time
-                    people_inline = int(people_inline)
+                    people_inline = float(people_inline)
                     setup_time = float(setup_time)
                     setup_people = int(setup_people)
                     completed_date = timezone.datetime.strptime(completed_date, '%Y-%m-%d')
@@ -671,7 +671,8 @@ def add_production_entry(request):
                         completed_date=completed_date,
                     )
                 except ValueError:
-                    messages.error(request, f'Invalid data for item {i}')
+                    messages.error(request, f'Invalid data for item {i} ')
+
             people = request.POST.get('people')
             extra_hours = request.POST.get('extra_hours') if request.POST.get('extra_hours') else 0
             if people:

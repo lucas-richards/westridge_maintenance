@@ -45,62 +45,12 @@
                 <tbody id="items_table_body">
                     <tr>
                         <td>
-                            <input type="text" id="item_search" class="form-control mb-2" placeholder="Search item..." onkeyup="filterItems(this, 'item1')">
-                            <select name="item1" id="item1" class="form-control" onchange="setDefaultInlinePeople(this)" hidden>
+                            <select name="item1" id="item1" class="form-control" onchange="setDefaultInlinePeople(this)">
                                 <option value="" selected>Select an item</option>
                                 {% for item in items %}
                                     <option value="{{ item.id }}" data-kind="{{ item.kind }}">{{ item }}</option>
                                 {% endfor %}
                             </select>
-
-                            <script>
-                                function filterItems(input, selectId) {
-                                    var filter = input.value.toLowerCase();
-                                    var select = document.getElementById(selectId);
-                                    var options = select.getElementsByTagName('option');
-                                    for (var i = 0; i < options.length; i++) {
-                                        var option = options[i];
-                                        var text = option.text.toLowerCase();
-                                        if (text.includes(filter)) {
-                                            option.style.display = "";
-                                        } else {
-                                            option.style.display = "none";
-                                        }
-                                    }
-                                }
-                            </script>
-                            <ul id="item_suggestions" class="list-group" style="position: absolute; z-index: 1000; display: none;"></ul>
-
-                            <script>
-                                function filterItems(input, selectId) {
-                                    var filter = input.value.toLowerCase();
-                                    var select = document.getElementById(selectId);
-                                    var options = select.getElementsByTagName('option');
-                                    var suggestions = document.getElementById('item_suggestions');
-                                    suggestions.innerHTML = '';
-                                    suggestions.style.display = 'none';
-                                    
-                                    for (var i = 0; i < options.length; i++) {
-                                        var option = options[i];
-                                        var text = option.text.toLowerCase();
-                                        if (text.includes(filter)) {
-                                            var suggestionItem = document.createElement('li');
-                                            suggestionItem.className = 'list-group-item list-group-item-action';
-                                            suggestionItem.textContent = option.text;
-                                            suggestionItem.setAttribute('data-value', option.value);
-                                            suggestionItem.setAttribute('data-kind', option.getAttribute('data-kind'));
-                                            suggestionItem.addEventListener('click', function() {
-                                                input.value = this.textContent;
-                                                select.value = this.getAttribute('data-value');
-                                                setDefaultInlinePeople(select);
-                                                suggestions.style.display = 'none';
-                                            });
-                                            suggestions.appendChild(suggestionItem);
-                                            suggestions.style.display = 'block';
-                                        }
-                                    }
-                                }
-                            </script>
                             <script>
                                 function setDefaultInlinePeople(selectElement) {
                                     var selectedOption = selectElement.options[selectElement.selectedIndex];
@@ -137,7 +87,7 @@
                             </div>
                         </td>
                         <td>
-                            <input type="number" name="people_inline1" id="people_inline1" class="form-control"  step="any" required>
+                            <input type="number" name="people_inline1" id="people_inline1" class="form-control" step="any" required>
                         </td>
                         <td>
                             <input type="text" name="setup_time1" id="setup_time1" class="form-control" required>
@@ -267,8 +217,8 @@
         peopleInlineInput.name = "people_inline" + itemCount;
         peopleInlineInput.id = "people_inline" + itemCount;
         peopleInlineInput.className = "form-control";
-        peopleInlineInput.required = true;
         peopleInlineInput.step = "any";
+        peopleInlineInput.required = true;
         peopleInlineCell.appendChild(peopleInlineInput);
 
         var setupTimeCell = document.createElement("td");

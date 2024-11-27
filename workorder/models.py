@@ -291,7 +291,7 @@ class ProdItem(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return self.item.sku + ' - ' + self.item.description
+        return str(self.completed_date) + ' - ' + self.item.sku + ' - ' + self.item.description
 
     
         
