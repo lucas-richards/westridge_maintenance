@@ -728,6 +728,7 @@ def productivity(request):
 
     # add a property called pph (parts per hour) to each item
     for item in items:
+        print('item',item)
         item.pph = round(item.qty_produced / item.produced_time) if item.produced_time != 0 else 0
         item.pphp = round(item.pph/item.people_inline) if item.people_inline != 0 else 0
         item.item.pphp = round(item.item.pph/item.item.people_inline) if item.item.people_inline != 0 else 0
