@@ -298,8 +298,6 @@
                 `;
                 
             })
-            // run checkpurchasing
-            .then(checkPurchasing)
             .catch(error => {
                 console.error('Error loading workorder details:', error);
             });
@@ -319,22 +317,7 @@
 });
 
 </script>
-<!-- check if user is from purchasing to checkboxes -->
-<script>
-    function checkPurchasing () {
-        const userDepartment = "{{ user.profile.department }}"; // Assuming user profile department is available in the template context
 
-        if (userDepartment.toLowerCase() === 'purchasing') {
-            document.querySelectorAll('input[id^="purchase_part_"]').forEach(checkbox => {
-                checkbox.disabled = false;
-            });
-        } else {
-            document.querySelectorAll('input[id^="purchase_part_"]').forEach(checkbox => {
-                checkbox.disabled = true;
-            });
-        }
-    };
-</script>
 <script>
     function validateForm() {
         const status = document.getElementById('status').value;
