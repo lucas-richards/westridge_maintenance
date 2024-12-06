@@ -11,7 +11,7 @@
         white-space: nowrap; 
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 200px; /* Adjust the width as needed */
+        max-width: 280px; /* Adjust the width as needed */
     }
 
     .highlight {
@@ -209,9 +209,12 @@
                                 </div>
                                 <div class="mb-4 row">
                                     <div class="col-md-7">
-                                        <h2><strong>WO${data.id}</strong> ${data.code}</h2>
+                                        
+                                        <h2><strong>WO${data.id}</strong>  </h2>
+                                        ${data.asset ? `<h6>${data.asset} (${data.code})</h6>` : ''}
                                         <h5>${data.title}</h5>
                                         ${data.description ? `<p style="height: 200px; overflow-y: scroll;">${data.description.split('\n').map(line => `<span>${line}</span><br>`).join('')}</p>` : ''}
+                                        ${data.assigned_to ? `<p><strong>Assigned To:</strong> ${data.assigned_to}</p>` : ''}
                                         ${data.attachments ? `<p><strong>Attachment: </strong><a target="_blank" href="${data.attachments}">link</a></p>` : ''}
                                         
                                         ${data.last_record_checklist_items && data.last_record_checklist_items.length > 0 ? `

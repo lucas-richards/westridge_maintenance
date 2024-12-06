@@ -370,6 +370,7 @@ def workorder(request, id):
             data = {
                 'id': workorder.id,
                 'code': workorder.asset.code if workorder.asset else '',
+                'asset': workorder.asset.name if workorder.asset else '',
                 'title': workorder.title,
                 'notification': workorder.notification,
                 'priority': workorder.priority,
