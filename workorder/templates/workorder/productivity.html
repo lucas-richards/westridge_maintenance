@@ -131,7 +131,7 @@
                     {{ item.inline_earned_hours }}
                 </td>
                 <td>
-                    {{ item.productivity_inline }}%
+                    <strong>{{ item.productivity_inline }}%</strong>
                 </td>
                 <td>
                     {{ item.setup_time }}<br>
@@ -148,7 +148,7 @@
                     {{ item.productivity_setup|default:"-" }}{% if item.productivity_setup != None %}%{% endif %}
                 </td>
                 <td>
-                    {{ item.productivity_total }}%
+                    <strong>{{ item.productivity_total }}%</strong>
                 </td>
             </tr>
             {% endfor %}
