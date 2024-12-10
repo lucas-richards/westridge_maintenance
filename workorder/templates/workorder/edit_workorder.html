@@ -85,10 +85,12 @@
         </div>
         <!-- button to delete item -->
         
-            <form method="post" action="{% url 'workorder-delete-workorder' workorder.id %}">
-                {% csrf_token %}
-                <button type="submit" class="m-3 btn btn-danger">Delete</button>
-            </form>
+            {% if user.is_superuser %}
+                <form method="post" action="{% url 'workorder-delete-workorder' workorder.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="m-3 btn btn-danger">Delete</button>
+                </form>
+            {% endif %}
 
     </div>
 </div>
