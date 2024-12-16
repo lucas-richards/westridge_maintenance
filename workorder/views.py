@@ -52,6 +52,7 @@ def dashboard(request):
         'scheduled': work_orders_records.filter(status='scheduled').count(),
         'cancelled': work_orders_records.filter(status='cancelled').count(),
         'overdue': round(work_orders_records.filter(due_date__lt=timezone.now()- datetime.timedelta(days=1)).exclude(status__in=['done', 'cancelled']).count(), 0),
+        'overdue_high_criticality': round(work_orders_records.filter(due_date__lt=timezone.now()- datetime.timedelta(days=1), workorder__asset__criticality='high').exclude(status__in=['done', 'cancelled']).count(), 0),
         'on_time': round(work_orders_records.filter(due_date__gte=timezone.now()- datetime.timedelta(days=1)).exclude(status__in=['done', 'cancelled']).count(), 0),
         'total': work_orders_records.count(),
         'total_exclude_done_cancelled': work_orders_records.exclude(status__in=['done', 'cancelled']).count(),
@@ -80,11 +81,14 @@ def dashboard(request):
     overdue_kpi = KPIValue.objects.filter(kpi__name='Overdue', date__gte=timezone.now() - datetime.timedelta(days=30)).order_by('date')
     overdue_kpi_values = [value.value for value in overdue_kpi]
     overdue_kpi_dates = [value.date.strftime('%m-%d-%Y') for value in overdue_kpi]
-    wordordersqty_kpi_values = [value.value for value in KPIValue.objects.filter(kpi__name='Work Orders Qty').order_by('date')]
-    wordordersqty_kpi_dates = [value.date.strftime('%m-%d-%Y') for value in KPIValue.objects.filter(kpi__name='Work Orders Qty').order_by('date')]
+    overdueH_kpi = KPIValue.objects.filter(kpi__name='Overdue High Criticality', date__gte=timezone.now() - datetime.timedelta(days=30)).order_by('date')
+    overdueH_kpi_values = [value.value for value in overdueH_kpi]
+    overdueH_kpi_dates = overdue_kpi_dates
+    while len(overdueH_kpi_values) < len(overdue_kpi_dates):
+        overdueH_kpi_values.insert(0, 0)
+    wordordersqty_kpi_values = [value.value for value in KPIValue.objects.filter(kpi__name='Work Orders Qty', date__gte=timezone.now() - datetime.timedelta(days=7)).order_by('date')]
+    wordordersqty_kpi_dates = [value.date.strftime('%m-%d-%Y') for value in KPIValue.objects.filter(kpi__name='Work Orders Qty', date__gte=timezone.now() - datetime.timedelta(days=7)).order_by('date')]
 
-    print('wo qty', wordordersqty_kpi_values)
-    print('wo qty dates', wordordersqty_kpi_dates)
 
     context = {
         'title': 'Dashboard',
@@ -97,6 +101,8 @@ def dashboard(request):
         'productivity_kpi_dates': productivity_kpi_dates,
         'overdue_kpi_values': overdue_kpi_values,
         'overdue_kpi_dates': overdue_kpi_dates,
+        'overdueH_kpi_values': overdueH_kpi_values,
+        'overdueH_kpi_dates': overdueH_kpi_dates,
         'assets_workorders_count': assets_workorders_count,
         'wordordersqty_kpi_values': wordordersqty_kpi_values,
         'wordordersqty_kpi_dates': wordordersqty_kpi_dates,

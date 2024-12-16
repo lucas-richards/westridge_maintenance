@@ -208,8 +208,8 @@
             scales: {
                 y: {
                     beginAtZero: true,
-                    min: 0,
-                    max: 200,
+                    min: 100,
+                    max: 130,
                     
                 }
             },
@@ -237,15 +237,26 @@
             labels: {{ productivity_kpi_dates|safe }},
             datasets: [
             {
-                label: 'Qty of Overdue Work Orders',
+                label: 'Overdue Work Orders',
                 data:  {{ overdue_kpi_values|safe }},
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 193, 7, 0.2)',
+                borderColor: 'rgba(255, 193, 7, 1)',
                 borderWidth: 1,
                 pointRadius: 0, 
             },
             {
-                label: 'Qty of Completed Work Orders',
+                label: 'Overdue Critical Work Orders',
+                data:  {{ overdueH_kpi_values|safe }},
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+                pointRadius: 0, 
+                datalabels: {
+                    color: 'red',
+                }
+            },
+            {
+                label: 'Completed Work Orders',
                 data:  {{ productivity_kpi_values|safe }},
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                 borderColor: 'rgba(54, 162, 235, 1)',
@@ -278,7 +289,7 @@
                     anchor: 'end',
                     align: 'end', // Change align to 'end' to avoid overlapping
                     offset: function(context) {
-                        return context.datasetIndex === 1 ? 10 : 0; // Add offset only to the second dataset
+                        return context.datasetIndex === 1 || context.datasetIndex === 2 ? 10 : 0; // Add offset to the second and third datasets
                     },
                     color: 'black',
                 }
