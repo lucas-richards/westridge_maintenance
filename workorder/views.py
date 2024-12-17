@@ -33,7 +33,7 @@ def dashboard(request):
         'more': 0,
     }
     for asset in assets:
-        workorders_count = WorkOrder.objects.filter(asset=asset).count()
+        workorders_count = WorkOrder.objects.filter(asset=asset).exclude(recurrence='Once').count()
         if workorders_count == 0:
             assets_workorders_count['zero'] += 1
         elif workorders_count == 1:
@@ -169,7 +169,7 @@ def assets(request):
     assets = Asset.objects.all().order_by('code')
     # add an extra property to each asset 'workorders_count'
     for asset in assets:
-        asset.workorders_count = WorkOrder.objects.filter(asset=asset).count()
+        asset.workorders_count = WorkOrder.objects.filter(asset=asset).exclude(recurrence='Once').count()
 
     current_time = timezone.now()
 

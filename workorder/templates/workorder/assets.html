@@ -54,6 +54,12 @@
 <!-- create two columns -->
  <div class="d-flex justify-content-between align-items-center">
     <input type="text" id="searchBox" class="form-control text-center" placeholder="Search Record" style="width: 33%;" oninput="filterassets()">
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="filterRWO0" onclick="filterRWO0Assets()">
+        <label class="form-check-label" for="filterRWO0">
+            Show Assets Without Repeated Work Orders
+        </label>
+    </div>
      <a href="{% url 'workorder-add-asset' %}" class="btn btn-outline-primary">Create Asset</a>
  </div>
 <div class="mb-4 row">
@@ -67,6 +73,7 @@
                     <div class="d-flex justify-content-center align-items-bottom">
                         <h5 class="mr-2 font-weight-bold">{{ asset.code }}</h5>
                         <p class="truncate" style="width:200px">{{ asset.name }}</p>
+                        <p class="repworkorder" style="color: transparent;">RWO-{{ asset.workorders_count }}</p>
                     </div>
                     <!-- green dot if status is online -->
                     {% if asset.status == 'online' %}
@@ -297,6 +304,36 @@
             }
         } else {
             asset.style.display = "none";
+        }
+    }
+
+    // Trigger a click event on the first visible asset item after filtering
+    if (firstVisibleAsset) {
+        firstVisibleAsset.click();
+    }
+}
+</script>
+<script>
+    function filterRWO0Assets() {
+    var filterRWO0 = document.getElementById("filterRWO0");
+    var assets = document.getElementsByClassName("asset");
+    var firstVisibleAsset = null;
+
+    for (var i = 0; i < assets.length; i++) {
+        var asset = assets[i];
+        var assetText = asset.innerText.toUpperCase().trim();
+
+        if (filterRWO0.checked) {
+            if (assetText.indexOf("RWO-0") > -1) {
+                asset.style.display = "";
+                if (!firstVisibleAsset) {
+                    firstVisibleAsset = asset.querySelector('.asset-item');
+                }
+            } else {
+                asset.style.display = "none";
+            }
+        } else {
+            asset.style.display = "";
         }
     }
 
