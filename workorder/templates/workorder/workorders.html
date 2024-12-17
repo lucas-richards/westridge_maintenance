@@ -204,7 +204,10 @@
                                         `<h6> <span class=" ${data.time_until_due < 0 ? 'text-danger' : data.time_until_due == 0 ? 'text-success':'font-weight-bold'}">${data.status === 'done'? '' : data.time_until_due < 0 ? 'Overdue' : data.time_until_due == 0 ? 'Today': 'Next due in ' + data.time_until_due + ' days'} </span></h6>`
                                     }
                                     {% if user.is_authenticated %}
-                                        <button id="edit-button" class="btn btn-primary">Edit WO</button>
+                                        <div>
+                                            <button id="copy-button" class="btn btn-primary">Copy WO</button>
+                                            <button id="edit-button" class="btn btn-primary">Edit WO</button>
+                                        </div>
                                     {% endif %}
                                 </div>
                                 <div class="mb-4 row">
@@ -349,6 +352,11 @@
                 editButton.addEventListener('click', function () {
                     // Redirect to the edit page
                     window.location.href = `/maintenance/workorder/edit/${idwo?idwo:workorderId}/`;
+                });
+                const copyButton = document.getElementById('copy-button');
+                copyButton.addEventListener('click', function () {
+                    // Redirect to the edit page
+                    window.location.href = `/maintenance/workorder/copy/${idwo?idwo:workorderId}/`;
                 });
             })
             .catch(error => {

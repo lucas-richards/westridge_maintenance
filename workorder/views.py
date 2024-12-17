@@ -15,6 +15,8 @@ from users.models import User
 import datetime as dt
 from django.core.paginator import Paginator
 from django.db.models.functions import TruncDate
+from django.core.mail import send_mail
+import os
 
 # Create your views here.
 
@@ -462,11 +464,36 @@ def add_workorder(request):
         form.instance.created_by = request.user
         if form.is_valid():
             form.save()
+            messages.success(request, 'Work Order added successfully')
             return redirect('workorder-workorders')
     else:
         form = WorkOrderEditForm()
         # order by assigned to
         form.fields['assigned_to'].queryset = User.objects.order_by('username')
+    context = {
+        'title': 'Add Work Order',
+        'form': form,
+    }
+    return render(request, 'workorder/new_workorder.html', context)
+
+@login_required
+def copy_workorder(request, id):
+    if request.method == 'POST':
+        form = WorkOrderEditForm(request.POST, request.FILES)
+        # add created by
+        form.instance.created_by = request.user
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Work Order added successfully')
+            return redirect('workorder-workorders')
+    else:
+        workorder = WorkOrder.objects.get(id=id)
+        form = WorkOrderEditForm(instance=workorder)
+        # reorder assets in the form by code
+        form.fields['asset'].queryset = Asset.objects.order_by('code')
+        # clear the asset form value
+        form.fields['asset'].initial = None
+    
     context = {
         'title': 'Add Work Order',
         'form': form,
@@ -495,8 +522,22 @@ def edit_workorder(request, id):
 @login_required
 def delete_workorder(request, id):
     workorder = WorkOrder.objects.get(id=id)
-    workorder.delete()
-    messages.success(request, 'Work Order deleted successfully')
+    if request.user.is_superuser:
+        workorder.delete()
+        messages.success(request, 'Work Order deleted successfully')
+    else:
+        email_user = os.environ.get('EMAIL_USER')
+        email_password = os.environ.get('EMAIL_PASS')
+        author_email = 'lrichards@westridgelabs.com'
+        recipients = ['lrichards@westridgelabs.com']
+        send_mail(
+            'Work Order Deletion Request',
+            f'User {request.user.username} has requested to delete work order {workorder.id}.',
+            author_email,
+            recipients,
+            fail_silently=False,
+        )
+        messages.info(request, 'Request to delete work order has been sent to the administrator.')
     return redirect('workorder-workorders')
 
 
@@ -627,8 +668,6 @@ def add_workorder_record(request):
         'form': form,
     }
     return render(request, 'workorder/new_workorder_record.html', context)
-
-
 
 
 @login_required
