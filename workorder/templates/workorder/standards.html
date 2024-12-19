@@ -27,7 +27,7 @@
         {% for item in items %}
         <tr class="sku">
             <td><a href="{% url 'workorder-update-standard' item.id %}">{{ item.sku|default:"-" }}</a></td>
-            <td class="truncate">{{ item.description|default:"-" }}</td>
+            <td>{{ item.description|truncatechars:25|default:"-" }}</td>
             <td class="text-center">{{ item.get_kind_display|default:"-" }}</td>
             <td class="text-center">{{ item.get_formula_display|default:"-" }}</td>
             <td class="text-center">{{ item.pph|default:"-" }}</td>
@@ -46,7 +46,7 @@
             {% else %}
             <td></td>
             {% endif %}
-            <td class="text-center"><small>{{ item.notes }}</small></td>
+            <td class="text-center"><small>{{ item.notes|default:"" }}</small></td>
         </tr>
         {% endfor %}
     </tbody>

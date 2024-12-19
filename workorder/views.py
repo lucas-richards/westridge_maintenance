@@ -59,6 +59,7 @@ def dashboard(request):
         'total': work_orders_records.count(),
         'total_exclude_done_cancelled': work_orders_records.exclude(status__in=['done', 'cancelled']).count(),
     }
+    print('overdue_high_criticality', work_orders_records_status['overdue_high_criticality'])
 
     # calculate the percentages
     work_orders_records_status['overdue_percentage'] = round((work_orders_records_status['overdue'] / work_orders_records_status['total_exclude_done_cancelled']) * 100) if work_orders_records_status['total_exclude_done_cancelled'] != 0 else 0
@@ -85,6 +86,7 @@ def dashboard(request):
     overdue_kpi_dates = [value.date.strftime('%m-%d-%Y') for value in overdue_kpi]
     overdueH_kpi = KPIValue.objects.filter(kpi__name='Overdue High Criticality', date__gte=timezone.now() - datetime.timedelta(days=30)).order_by('date')
     overdueH_kpi_values = [value.value for value in overdueH_kpi]
+    print('overdueH_kpi', overdueH_kpi_values)
     overdueH_kpi_dates = overdue_kpi_dates
     while len(overdueH_kpi_values) < len(overdue_kpi_dates):
         overdueH_kpi_values.insert(0, 0)
