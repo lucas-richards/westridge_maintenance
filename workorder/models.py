@@ -267,10 +267,24 @@ class ProdItemStd(models.Model):
         default='bottle',
     )
     pph = models.IntegerField(null=True, blank=True)
+    formula = models.CharField(
+        max_length=255,
+        choices=[
+            ('glide', 'Glide'),
+            ('silicone A', 'Silicone A'),
+            ('free', 'Free'),
+            ('sanitaizer A', 'Sanitaizer A'),
+            ('t-glide', 'T-Glide'),
+        ],
+        null=True,
+        blank=True,
+
+    )
     people_inline = models.FloatField(null=True, blank=True)
     setup_time = models.FloatField(null=True, blank=True)
     setup_people = models.IntegerField(null=True, blank=True)
     image = models.ImageField(upload_to='prod_item_images/', null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)

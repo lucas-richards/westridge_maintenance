@@ -11,26 +11,30 @@
 <table class="table table-hover m-4 p-4">
     <thead>
         <tr>
-            <th style="width: 15%;">SKU</th>
-            <th style="width: 35%;">Description</th>
-            <th style="width: 10%;">Kind</th>
-            <th style="width: 10%;">PPH</th>
-            <th>People Inline</th>
-            <th>Setup Time</th>
-            <th>Setup People</th>
-            <th>Line Setup</th>
+            <th style="width: 10%; text-align: center;">SKU</th>
+            <th style="width: 20%; text-align: center;">Description</th>
+            <th style="width: 7%; text-align: center;">Kind</th>
+            <th style="width: 7%; text-align: center;">Formula</th>
+            <th style="width: 7%; text-align: center;">PPH</th>
+            <th style="width: 7%; text-align: center;">People Inline</th>
+            <th style="width: 7%; text-align: center;">Setup Time</th>
+            <th style="width: 7%; text-align: center;">Setup People</th>
+            <th style="width: 7%; text-align: center;">Line Setup</th>
+            <th style="width: 20%; text-align: center;">Notes</th>
         </tr>
     </thead>
     <tbody>
         {% for item in items %}
         <tr class="sku">
-            <td><a href="{% url 'workorder-update-standard' item.id %}">{{ item.sku }}</a></td>
-            <td>{{ item.description }}</td>
-            <td>{{ item.get_kind_display }}</td>
-            <td>{{ item.pph }}</td>
-            <td>{{ item.people_inline }}</td>
-            <td>{{ item.setup_time }}</td>
-            <td>{{ item.setup_people }}</td>
+            <td><a href="{% url 'workorder-update-standard' item.id %}">{{ item.sku|default:"-" }}</a></td>
+            <td class="truncate">{{ item.description|default:"-" }}</td>
+            <td class="text-center">{{ item.get_kind_display|default:"-" }}</td>
+            <td class="text-center">{{ item.get_formula_display|default:"-" }}</td>
+            <td class="text-center">{{ item.pph|default:"-" }}</td>
+            <td class="text-center">{{ item.people_inline|default:"-" }}</td>
+            <td class="text-center">{{ item.setup_time|default:"-" }}</td>
+            <td class="text-center">{{ item.setup_people|default:"-" }}</td>
+            
             <!-- if it has an image then green tick -->
             {% if item.image %}
             <td class="text-center">
@@ -38,9 +42,11 @@
                     <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/>
                 </svg>
             </td>
+            
             {% else %}
             <td></td>
             {% endif %}
+            <td class="text-center"><small>{{ item.notes }}</small></td>
         </tr>
         {% endfor %}
     </tbody>
