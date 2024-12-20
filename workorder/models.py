@@ -167,6 +167,22 @@ class WorkOrder(models.Model):
         if not self.workorderrecord_set.exists():
             WorkOrderRecord.objects.create(workorder=self, due_date=self.first_due_date, assigned_to=self.assigned_to)
 
+        # workorder date is overdue and the asset is critical update critical kpi if it's not critical update overdue kpi
+        kpi = KPI.objects.get(name='Overdue')
+        kpi_critical = KPI.objects.get(name='Overdue High Criticality')
+        today = timezone.now().date()
+        work_order = self
+        if work_order.first_due_date.date() < today:
+            kpi_value = KPIValue.objects.filter(kpi=kpi, date=today).first()
+            kpi_critical_value = KPIValue.objects.filter(kpi=kpi_critical, date=today).first()
+            if not kpi_critical_value:
+                kpi_value.value += 1
+            else:
+                kpi_critical_value.value += 1
+            kpi_value.save()
+            kpi_critical_value.save()
+        
+
     
 
 class WorkOrderRecord(models.Model):

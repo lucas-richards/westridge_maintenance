@@ -183,12 +183,18 @@ class Command(BaseCommand):
         # get the last record or each work order and check for those with status different from done and cancelled if they are overdue by checking if the due date is later than today
         work_orders = WorkOrder.objects.all()
         overdue = 0
+        overdue_high = 0
         for work_order in work_orders:
             last_work_order_record = work_order.workorderrecord_set.last()
             if last_work_order_record and last_work_order_record.status not in ['done', 'cancelled'] and last_work_order_record.due_date.date() < timezone.now().date():
-                overdue += 1
+                # if asset criticalliy is high then overdue_high += 1
+                if work_order.asset.criticality == 'High':
+                    overdue_high += 1
+                else:
+                    overdue += 1
         # save to over due kpi
         self.save_kpi2('Overdue', overdue)
+        self.save_kpi2('Overdue High Criticality', overdue_high)
         print('overdue:', overdue)
 
 
