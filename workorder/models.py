@@ -161,7 +161,8 @@ class WorkOrder(models.Model):
     def __str__(self):
         return 'WO' + str(self.id) + '-' + self.title 
 
-    #  when a work order is created, I want to automatically create a work order record with same due date and assigned to the same person
+    #  when a work order is created, 
+    # I want to automatically create a work order record with same due date and assigned to the same person
     def save(self, *args, **kwargs):
         super(WorkOrder, self).save(*args, **kwargs)
         if not self.workorderrecord_set.exists():
