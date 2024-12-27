@@ -90,8 +90,8 @@ def dashboard(request):
     overdueH_kpi_dates = overdue_kpi_dates
     while len(overdueH_kpi_values) < len(overdue_kpi_dates):
         overdueH_kpi_values.insert(0, 0)
-    wordordersqty_kpi_values = [value.value for value in KPIValue.objects.filter(kpi__name='Work Orders Qty', date__gte=timezone.now() - datetime.timedelta(days=7)).order_by('date')]
-    wordordersqty_kpi_dates = [value.date.strftime('%m-%d-%Y') for value in KPIValue.objects.filter(kpi__name='Work Orders Qty', date__gte=timezone.now() - datetime.timedelta(days=7)).order_by('date')]
+    wordordersqty_kpi_values = [value.value for value in KPIValue.objects.filter(kpi__name='Work Orders Qty', date__gte=timezone.now() - datetime.timedelta(days=14)).order_by('date')]
+    wordordersqty_kpi_dates = [value.date.strftime('%m-%d-%Y') for value in KPIValue.objects.filter(kpi__name='Work Orders Qty', date__gte=timezone.now() - datetime.timedelta(days=14)).order_by('date')]
 
 
     context = {
