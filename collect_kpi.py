@@ -135,23 +135,27 @@ class Command(BaseCommand):
             if last_work_order_record:
                 print('last_work_order_record:', last_work_order_record, work_order.recurrence)
                 if last_work_order_record.status in ['done', 'cancelled']:
-                    if last_work_order_record.completed_date:
+                    if last_work_order_record.completed_on:
                         if work_order.recurrence == 'Daily':
-                            new_due_date = last_work_order_record.completed_date + dt.timedelta(days=1)
+                            new_due_date = last_work_order_record.completed_on + dt.timedelta(days=1)
                         elif work_order.recurrence == 'Weekly':
-                            new_due_date = last_work_order_record.completed_date + dt.timedelta(weeks=1)
+                            new_due_date = last_work_order_record.completed_on + dt.timedelta(weeks=1)
                         elif work_order.recurrence == 'Monthly':
-                            new_due_date = last_work_order_record.completed_date + relativedelta(months=1)
+                            new_due_date = last_work_order_record.completed_on + relativedelta(months=1)
                         elif work_order.recurrence == 'Quarterly':
-                            new_due_date = last_work_order_record.completed_date + relativedelta(months=3)
+                            new_due_date = last_work_order_record.completed_on + relativedelta(months=3)
                         elif work_order.recurrence == 'Biannually':
-                            new_due_date = last_work_order_record.completed_date + relativedelta(months=6)
+                            new_due_date = last_work_order_record.completed_on + relativedelta(months=6)
                         elif work_order.recurrence == 'Yearly':
-                            new_due_date = last_work_order_record.completed_date + relativedelta(years=1)
+                            new_due_date = last_work_order_record.completed_on + relativedelta(years=1)
                         elif work_order.recurrence == '3 Years':
-                            new_due_date = last_work_order_record.completed_date + relativedelta(years=3)
+                            new_due_date = last_work_order_record.completed_on + relativedelta(years=3)
+                        else:
+                            new_due_date = ''
 
-                        new = WorkOrderRecord.objects.create(workorder=work_order, due_date=new_due_date)
+                        if new_due_date:
+                            new = WorkOrderRecord.objects.create(workorder=work_order, due_date=new_due_date)
+                            print('new:', new)
                     
                     if last_work_order_record.checklist_items.exists():
                         for item in last_work_order_record.checklist_items.all():
