@@ -13,6 +13,7 @@ from datetime import date
 from workorder.models import WorkOrder, WorkOrderRecord, KPI as KPI2, KPIValue as KPIValue2, CheckListItem, PurchasePart
 import datetime as dt
 from django.utils import timezone
+from dateutil.relativedelta import relativedelta
 
 class Command(BaseCommand):
     help = 'Calculate and save daily KPI values'
