@@ -171,7 +171,7 @@ class Command(BaseCommand):
                             print('new_checklist:', new_checklist)
                             print('new record:', new)
 
-                    #  if last record purchase parts exist add them to the new record
+                    #  if last record purchase parts exist add them to
                     if last_work_order_record.purchase_parts.exists():
                         for part in last_work_order_record.purchase_parts.all():
                             part_data = {
