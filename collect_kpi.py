@@ -129,6 +129,7 @@ class Command(BaseCommand):
 
         
         # Maintenance APP
+        # works great
         # schedule a work order record according to the recurrence and if the last work order record is done or cancelled
         work_orders = WorkOrder.objects.all()
         for work_order in work_orders:
