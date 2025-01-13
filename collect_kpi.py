@@ -197,14 +197,16 @@ class Command(BaseCommand):
             last_work_order_record = work_order.workorderrecord_set.last()
             if last_work_order_record and last_work_order_record.status not in ['done', 'cancelled'] and last_work_order_record.due_date.date() < timezone.now().date():
                 # if asset criticalliy is high then overdue_high += 1
-                if work_order.asset and work_order.asset.criticality == 'High':
+                if work_order.asset and work_order.asset.criticality == 'high' or work_order.asset.criticality == 'High':
                     overdue_high += 1
                 else:
                     overdue += 1
+                print('overdue:', last_work_order_record)
         # save to over due kpi
         self.save_kpi2('Overdue', overdue)
         self.save_kpi2('Overdue High Criticality', overdue_high)
         print('overdue:', overdue)
+        print('overdue_high:', overdue_high)
 
 
         # if there are no work orders records for today, then set the productivity kpi value to 0
