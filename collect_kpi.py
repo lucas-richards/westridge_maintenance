@@ -133,7 +133,8 @@ class Command(BaseCommand):
         # schedule a work order record according to the recurrence and if the last work order record is done or cancelled
         work_orders = WorkOrder.objects.all()
         for work_order in work_orders:
-            last_work_order_record = work_order.workorderrecord_set.last()
+            # last_work_order_record = work_order.workorderrecord_set.last()
+            last_work_order_record = work_order.workorderrecord_set.order_by('due_date').last()
             if last_work_order_record:
                 print('last_work_order_record:', last_work_order_record, work_order.recurrence)
                 if last_work_order_record.status in ['done', 'cancelled']:
