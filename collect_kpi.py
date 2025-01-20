@@ -14,6 +14,8 @@ from workorder.models import WorkOrder, WorkOrderRecord, KPI as KPI2, KPIValue a
 import datetime as dt
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
+import logging
+from django.core.mail import send_mail
 
 class Command(BaseCommand):
     help = 'Calculate and save daily KPI values'
@@ -131,108 +133,134 @@ class Command(BaseCommand):
         # Maintenance APP
         # works great
         # schedule a work order record according to the recurrence and if the last work order record is done or cancelled
-        work_orders = WorkOrder.objects.all()
-        for work_order in work_orders:
-            # last_work_order_record = work_order.workorderrecord_set.last()
-            last_work_order_record = work_order.workorderrecord_set.order_by('due_date').last()
-            if last_work_order_record:
-                print('last_work_order_record:', last_work_order_record, work_order.recurrence)
-                if last_work_order_record.status in ['done', 'cancelled']:
-                    if last_work_order_record.completed_on:
-                        if work_order.recurrence == 'Daily':
-                            new_due_date = last_work_order_record.completed_on + dt.timedelta(days=1)
-                        elif work_order.recurrence == 'Weekly':
-                            new_due_date = last_work_order_record.completed_on + dt.timedelta(weeks=1)
-                        elif work_order.recurrence == 'Monthly':
-                            new_due_date = last_work_order_record.completed_on + relativedelta(months=1)
-                        elif work_order.recurrence == 'Quarterly':
-                            new_due_date = last_work_order_record.completed_on + relativedelta(months=3)
-                        elif work_order.recurrence == 'Biannually':
-                            new_due_date = last_work_order_record.completed_on + relativedelta(months=6)
-                        elif work_order.recurrence == 'Yearly':
-                            new_due_date = last_work_order_record.completed_on + relativedelta(years=1)
-                        elif work_order.recurrence == '3 Years':
-                            new_due_date = last_work_order_record.completed_on + relativedelta(years=3)
-                        else:
-                            new_due_date = ''
+        try:
+            work_orders = WorkOrder.objects.all()
+            for work_order in work_orders:
+                # last_work_order_record = work_order.workorderrecord_set.last()
+                last_work_order_record = work_order.workorderrecord_set.order_by('due_date').last()
+                if last_work_order_record:
+                    print('last_work_order_record:', last_work_order_record, work_order.recurrence)
+                    if last_work_order_record.status in ['done', 'cancelled']:
+                        if last_work_order_record.completed_on:
+                            if work_order.recurrence == 'Daily':
+                                new_due_date = last_work_order_record.completed_on + dt.timedelta(days=1)
+                            elif work_order.recurrence == 'Weekly':
+                                new_due_date = last_work_order_record.completed_on + dt.timedelta(weeks=1)
+                            elif work_order.recurrence == 'Monthly':
+                                new_due_date = last_work_order_record.completed_on + relativedelta(months=1)
+                            elif work_order.recurrence == 'Quarterly':
+                                new_due_date = last_work_order_record.completed_on + relativedelta(months=3)
+                            elif work_order.recurrence == 'Biannually':
+                                new_due_date = last_work_order_record.completed_on + relativedelta(months=6)
+                            elif work_order.recurrence == 'Yearly':
+                                new_due_date = last_work_order_record.completed_on + relativedelta(years=1)
+                            elif work_order.recurrence == '3 Years':
+                                new_due_date = last_work_order_record.completed_on + relativedelta(years=3)
+                            else:
+                                new_due_date = ''
 
-                        if new_due_date:
-                            new = WorkOrderRecord.objects.create(workorder=work_order, due_date=new_due_date)
-                            print('new:', new)
-                    
-                    if last_work_order_record.checklist_items.exists():
-                        for item in last_work_order_record.checklist_items.all():
-                            item_data = {
-                                'workorder_record': new,
-                                'title': item.title,
-                                'description': item.description,
-                                'status': '',  # Set the status to empty
-                                # Add any other fields that need to be copied
-                            }
-                            new_checklist = CheckListItem.objects.create(**item_data)
-                            print('new_checklist:', new_checklist)
-                            print('new record:', new)
+                            if new_due_date:
+                                new = WorkOrderRecord.objects.create(workorder=work_order, due_date=new_due_date)
+                                print('new:', new)
+                        
+                        if last_work_order_record.checklist_items.exists():
+                            for item in last_work_order_record.checklist_items.all():
+                                item_data = {
+                                    'workorder_record': new,
+                                    'title': item.title,
+                                    'description': item.description,
+                                    'status': '',  # Set the status to empty
+                                    # Add any other fields that need to be copied
+                                }
+                                new_checklist = CheckListItem.objects.create(**item_data)
+                                print('new_checklist:', new_checklist)
+                                print('new record:', new)
 
-                    #  if last record purchase parts exist add them to
-                    if last_work_order_record.purchase_parts.exists():
-                        for part in last_work_order_record.purchase_parts.all():
-                            part_data = {
-                                'workorder_record': new,
-                                'title': part.title,
-                                'description': part.description,
-                                # Add any other fields that need to be copied
-                            }
-                            new_part = PurchasePart.objects.create(**part_data)
-                            print('new_part:', new_part)
-                            print('new record:', new)
+                        #  if last record purchase parts exist add them to
+                        if last_work_order_record.purchase_parts.exists():
+                            for part in last_work_order_record.purchase_parts.all():
+                                part_data = {
+                                    'workorder_record': new,
+                                    'title': part.title,
+                                    'description': part.description,
+                                    # Add any other fields that need to be copied
+                                }
+                                new_part = PurchasePart.objects.create(**part_data)
+                                print('new_part:', new_part)
+                                print('new record:', new)
 
-            else:
-                WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now())
-
-
-        # get the last record or each work order and check for those with status different from done and cancelled if they are overdue by checking if the due date is later than today
-        work_orders = WorkOrder.objects.all()
-        overdue = 0
-        overdue_high = 0
-        for work_order in work_orders:
-            last_work_order_record = work_order.workorderrecord_set.last()
-            if last_work_order_record and last_work_order_record.status not in ['done', 'cancelled'] and last_work_order_record.due_date.date() < timezone.now().date():
-                # if asset criticalliy is high then overdue_high += 1
-                if work_order.asset and work_order.asset.criticality == 'high' or work_order.asset.criticality == 'High':
-                    overdue_high += 1
                 else:
-                    overdue += 1
-                print('overdue:', last_work_order_record)
-        # save to over due kpi
-        self.save_kpi2('Overdue', overdue)
-        self.save_kpi2('Overdue High Criticality', overdue_high)
-        print('overdue:', overdue)
-        print('overdue_high:', overdue_high)
+                    WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now())
 
 
-        # if there are no work orders records for today, then set the productivity kpi value to 0
-        
-        work_order_records_today = WorkOrderRecord.objects.filter(completed_on=today).count()
-        self.save_kpi2('Productivity', work_order_records_today)
+            # get the last record or each work order and check for those with status different from done and cancelled if they are overdue by checking if the due date is later than today
+            work_orders = WorkOrder.objects.all()
+            overdue = 0
+            overdue_high = 0
+            for work_order in work_orders:
+                last_work_order_record = work_order.workorderrecord_set.last()
+                if last_work_order_record and last_work_order_record.status not in ['done', 'cancelled'] and last_work_order_record.due_date.date() < timezone.now().date():
+                    # if asset criticalliy is high then overdue_high += 1
+                    if work_order.asset and work_order.asset.criticality.lower() == 'high':
+                        overdue_high += 1
+                    else:
+                        overdue += 1
+                    print('overdue:', last_work_order_record)
+            # save to over due kpi
+            self.save_kpi2('Overdue', overdue)
+            self.save_kpi2('Overdue High Criticality', overdue_high)
+            print('overdue:', overdue)
+            print('overdue_high:', overdue_high)
 
-        # count how many work order records have status done and create a kpivalue with that number
-        value = WorkOrderRecord.objects.filter(status='done').count()
-        self.save_kpi2('Status Done', value)
 
-        #  count how many work orders have the last work order record are on time and create a kpivalue with that number in timing kpi
-        work_orders_records = WorkOrderRecord.objects.all()
-        on_time = round(work_orders_records.filter(due_date__gte=timezone.now()).exclude(status__in=['done', 'cancelled']).count(), 0)
-        work_orders_excluding = work_orders_records.exclude(status__in=['done', 'cancelled'])
+            # if there are no work orders records for today, then set the productivity kpi value to 0
+            
+            work_order_records_today = WorkOrderRecord.objects.filter(completed_on=today).count()
+            self.save_kpi2('Productivity', work_order_records_today)
 
-        #  get percentage rounded to 0 decimals
-        percentage = round(on_time / work_orders_excluding.count() * 100) if work_orders_excluding.count() else 0
-        self.save_kpi2('Timing On Time', percentage)
+            # count how many work order records have status done and create a kpivalue with that number
+            value = WorkOrderRecord.objects.filter(status='done').count()
+            self.save_kpi2('Status Done', value)
 
-        # get the total of work orders and save it in workordersqty kpiwith todays date
-        work_orders_qty = WorkOrder.objects.all().count()
-        self.save_kpi2('Work Orders Qty', work_orders_qty)
+            #  count how many work orders have the last work order record are on time and create a kpivalue with that number in timing kpi
+            work_orders_records = WorkOrderRecord.objects.all()
+            on_time = round(work_orders_records.filter(due_date__gte=timezone.now()).exclude(status__in=['done', 'cancelled']).count(), 0)
+            work_orders_excluding = work_orders_records.exclude(status__in=['done', 'cancelled'])
 
-        self.stdout.write(self.style.SUCCESS('Successfully saved daily maintenance KPI values'))
+            #  get percentage rounded to 0 decimals
+            percentage = round(on_time / work_orders_excluding.count() * 100) if work_orders_excluding.count() else 0
+            self.save_kpi2('Timing On Time', percentage)
+
+            # get the total of work orders and save it in workordersqty kpiwith todays date
+            work_orders_qty = WorkOrder.objects.all().count()
+            self.save_kpi2('Work Orders Qty', work_orders_qty)
+
+            self.stdout.write(self.style.SUCCESS('Successfully saved daily maintenance KPI values'))
+        except Exception as e:
+            email_user = os.environ.get('EMAIL_USER')
+            email_password = os.environ.get('EMAIL_PASS')
+            author_email = os.environ.get('EMAIL_USER')
+            recipients = [f"{os.environ.get('EMAIL_USER')}"]
+
+            subject = f'Error - Maintenance KPI Calculation'
+            message = f'''
+            <div style="padding-left: 16px; border: 1px solid #ddd; border-radius: 4px;">
+                <div style=" border-bottom: 1px solid #ddd;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: baseline;">
+                            <p style="min-width: 50px; margin-right: 8px; font-weight: bold;">Error</p>
+                            <p class="truncate" style="min-width: 250px; margin-right: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{str(e)}</p>
+                        </div>
+                    </div>
+                </div>
+            '''
+            try:
+                send_mail(subject, '', email_user, recipients, html_message=message, auth_user=email_user, auth_password=email_password)
+                logging.info(f'Successfully sent reminder update email to {recipients}')
+                print(f'Successfully sent reminder update email to {recipients}')
+            except Exception as e:
+                logging.error(f'Error sending reminder update email to {recipients}: {str(e)}')
+                print(f'Error sending reminder update email to {recipients}: {str(e)}')
 
                     
 
