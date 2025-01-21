@@ -219,7 +219,7 @@ class WorkOrderRecord(models.Model):
             for work_order in work_orders:
                 last_work_order_record = work_order.workorderrecord_set.last()
                 if last_work_order_record and last_work_order_record.status not in ['done', 'cancelled'] and last_work_order_record.due_date.date() < timezone.now().date():
-                    if work_order.asset and work_order.asset.criticality == 'high' or work_order.asset.criticality == 'High':
+                    if work_order.asset and work_order.asset.criticality.lower() == 'high':
                         overdue_high += 1
                     else:
                         overdue += 1

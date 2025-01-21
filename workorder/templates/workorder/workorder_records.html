@@ -346,7 +346,7 @@
             }
         });
 
-        if (status === 'done' || status === 'cancelled' && !completedOn) {
+        if (status.lower() === 'done' || status === 'cancelled' && !completedOn) {
             Swal.fire({
             title: 'Missing Date',
             text: 'Please provide a completed on date when the status is set to "Done" or "Cancelled".',
