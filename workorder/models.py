@@ -208,42 +208,18 @@ class WorkOrderRecord(models.Model):
     # when saved check how many records are with status done today and update the kpi
     def save(self, *args, **kwargs):
         super(WorkOrderRecord, self).save(*args, **kwargs)
-        if self.status == 'done':
-            kpi = KPI.objects.get(name='Productivity')
-            kpi_overdue = KPI.objects.get(name='Overdue')
-            today = timezone.now().date()
-            value = WorkOrderRecord.objects.filter(status='done', completed_on__date=today).count()
-            work_orders = WorkOrder.objects.all()
-            overdue = 0
-            overdue_high = 0
-            for work_order in work_orders:
-                last_work_order_record = work_order.workorderrecord_set.last()
-                if last_work_order_record and last_work_order_record.status not in ['done', 'cancelled'] and last_work_order_record.due_date.date() < timezone.now().date():
-                    if work_order.asset and work_order.asset.criticality.lower() == 'high':
-                        overdue_high += 1
-                    else:
-                        overdue += 1
-            print('overdue:', overdue)
-            print('productivity:', value)
-            kpi_value = KPIValue.objects.filter(kpi=kpi, date=today).first()
-            kpi_overdue_value = KPIValue.objects.filter(kpi=kpi_overdue, date=today).first()
-            kpi_overdue_high_value = KPIValue.objects.filter(kpi=kpi_overdue, date=today).first()
-            if not kpi_overdue_value:
-                kpi_overdue_value = KPIValue.objects.create(kpi=kpi_overdue, date=today, value=overdue)
-            else:
-                kpi_overdue_value.value = overdue
-            if not kpi_overdue_high_value:
-                kpi_overdue_high_value = KPIValue.objects.create(kpi=kpi_overdue, date=today, value=overdue_high)
-            else:
-                kpi_overdue_high_value.value = overdue_high
+        today = timezone.now().date()
+        productivity_value = WorkOrderRecord.objects.filter(status='done', completed_on__date=today).count()
+        overdue = WorkOrderRecord.objects.filter(status__in=['in_progress', 'on_hold', 'scheduled'], due_date__lt=today).exclude(workorder__asset__criticality='high').count()
+        overdue_high = WorkOrderRecord.objects.filter(status__in=['in_progress', 'on_hold', 'scheduled'], due_date__lt=today, workorder__asset__criticality='high').count()
 
-            if not kpi_value:
-                kpi_value = KPIValue.objects.create(kpi=kpi, date=today, value=value)
-            else:
-                kpi_value.value = value
-            kpi_value.save()
-            kpi_overdue_value.save()
-            kpi_overdue_high_value.save()
+        kpi_productivity, _ = KPI.objects.get_or_create(name='Productivity')
+        kpi_overdue, _ = KPI.objects.get_or_create(name='Overdue')
+        kpi_overdue_high, _ = KPI.objects.get_or_create(name='Overdue High Criticality')
+
+        KPIValue.objects.update_or_create(kpi=kpi_productivity, date=today, defaults={'value': productivity_value})
+        KPIValue.objects.update_or_create(kpi=kpi_overdue, date=today, defaults={'value': overdue})
+        KPIValue.objects.update_or_create(kpi=kpi_overdue_high, date=today, defaults={'value': overdue_high})
 
 class CheckListItem(models.Model):
     workorder_record = models.ForeignKey(WorkOrderRecord, on_delete=models.CASCADE, related_name='checklist_items')
