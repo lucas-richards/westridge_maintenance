@@ -328,7 +328,7 @@ class DayProductivity(models.Model):
     productivity_foil = models.FloatField(null=True, blank=True)
     productivity_bottle = models.FloatField(null=True, blank=True)
     productivity_replenishment = models.FloatField(null=True, blank=True)
-    productivity = models.FloatField()
+    productivity = models.FloatField(null=True, blank=True)
     total_produced = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
