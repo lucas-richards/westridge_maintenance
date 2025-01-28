@@ -124,7 +124,7 @@ class Asset(models.Model):
     attachments = models.FileField(upload_to=asset_attachment_path, null=True, blank=True)
 
     def __str__(self):
-        return self.code + ' - ' + self.name 
+        return self.code + ' - ' + self.name + ' - Location: ' + self.location + ' - Criticality: ' + self.criticality + ' - Status: ' + self.status + ' - Created: ' + str(self.created_on.date())
 
 def workorder_attachment_path(instance, filename):
     return f'asset_attachments/{instance.title}/{filename}'
