@@ -193,7 +193,7 @@ class Command(BaseCommand):
                     WorkOrderRecord.objects.create(work_order=work_order, due_date=timezone.now())
 
 
-            # get the last record or each work order and check for those with status different from done and cancelled if they are overdue by checking if the due date is later than today
+            # get the last record or each work order and check for those with different from done and cancelled if they are overdue by checking if the due date is later than today
             work_orders = WorkOrder.objects.all()
             overdue = 0
             overdue_high = 0
