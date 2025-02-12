@@ -79,7 +79,7 @@ class Command(BaseCommand):
             print(f'Error sending schedule update email to {recipients}: {str(e)}')
 
 
-        # Check all workorders notification property and send email if the last record of the notification is not cancelled or, done and due date is within the notification settings
+        # Check all workorders notification property and send email if the last record of the notification is not cancelled  done and due date is within the notification settings
         workorders = WorkOrder.objects.all()
         for workorder in workorders:
             last_record = WorkOrderRecord.objects.filter(workorder=workorder).exclude(status__in=['done', 'cancelled']).order_by('-due_date').first()
