@@ -194,7 +194,7 @@
                 workorderDetailsDiv.innerHTML = `
                         <div class="">
                             ${
-                                data.workorder_id ? `<h2 class="text-center"><strong data-toggle="modal" data-target="#exampleModal"><a href="#""> WO${data.workorder_id}</a></strong></h2>` : ''
+                                data.workorder_id ? `<h2><strong data-toggle="modal" data-target="#exampleModal"><a href="#""> WO${data.workorder_id}</a></strong> - ${data.workorder_title}</h2>` : ''
                             }
                             <div class="card-header border rounded" style="height:50px">
                                 <div class=" d-flex justify-content-between align-items-center">
@@ -225,7 +225,7 @@
                                     ${data.purchase_parts && data.purchase_parts.length > 0 
                                     
                                     ? ` 
-                                        <label>Purchase Parts:</label>
+                                        <label>Check list:</label>
                                             <div class="card pt-3 pl-4"> 
                                                 ${data.purchase_parts.map(item => `
                                                 
@@ -249,7 +249,7 @@
                                             </div>
                                         </div>
                                     `).join('')}</div>` : ''}
-                                        
+
 
                                     
                                     <div class="form-group">

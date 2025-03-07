@@ -417,6 +417,15 @@ def workorder(request, id):
                                         'notes': item.notes
                                     }
                                     for item in CheckListItem.objects.filter(workorder_record=record).order_by('created_on')
+                                ],
+                                'completed_items': [
+                                    {
+                                        'id': item.id, 
+                                        'title': item.title, 
+                                        'description': item.description, 
+                                        'completed': item.completed
+                                    }
+                                    for item in record.purchase_parts.all()
                                 ]
                             } 
                             for record in records
@@ -439,7 +448,7 @@ def workorder(request, id):
                         'id': part.id, 
                         'title': part.title, 
                         'description': part.description, 
-                        'purchased': part.purchased
+                        'completed': part.completed
                     }
                     for part in last_record.purchase_parts.all()
                 ],
@@ -594,7 +603,8 @@ def workorder_record(request, id):
                 'comments': record.comments if record.comments else '',
                 'time_until_due': (record.due_date - timezone.now()- datetime.timedelta(days=1) ).days if record.due_date else '',
                 'checklist_items': [{'id': item.id, 'title': item.title, 'description': item.description, 'status': item.status, 'due_date': item.due_date.strftime('%m-%d-%Y') if item.due_date else '', 'attachments': item.attachments.url if item.attachments else '', 'notes': item.notes} for item in checklist_items],
-                'purchase_parts': [{'id': part.id, 'title': part.title, 'description': part.description, 'purchased': part.purchased } for part in record.purchase_parts.all()],
+                'purchase_parts': [{'id': part.id, 'title': part.title, 'description': part.description, 'completed': part.completed } for part in record.purchase_parts.all()],
+               
         }     
 
         status = request.POST.get('status')
@@ -630,7 +640,7 @@ def workorder_record(request, id):
                     print('request.POST', request.POST)
                     for part in record.purchase_parts.all():
                         value = request.POST.get(f'purchase_part_{part.id}', False)
-                        part.purchased = True if value == 'on' else False
+                        part.completed = True if value == 'on' else False
                         part.save()
                     record.save()
                     messages.success(request, 'Record updated successfully')
