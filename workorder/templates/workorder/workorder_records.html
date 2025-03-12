@@ -171,7 +171,7 @@
             this.classList.add('highlight');
             selectedworkorderItem = this;
 
-            // Update the URL without reloading the page
+            // Update the URL without reloading the page.
             history.pushState(null, '', `/maintenance/workorder_record/${recordId}/`);
             loadworkorderDetails(recordId);
         });
