@@ -5,7 +5,7 @@
 {% if user.is_authenticated %}
 
     <!-- form to update standard using django forms -->
-    <form method="post" class="m-4" action="{% url 'workorder-update-standard' item.id %}" enctype="multipart/form-data">
+    <form method="post" class="m-4" action="{% url 'workorder-add-standard' %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-row">
             {% for field in form %}

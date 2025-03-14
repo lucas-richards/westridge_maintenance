@@ -4,8 +4,12 @@
 
 {% if user.is_authenticated %}
 
-<div class="d-flex justify-content-center my-4">
+
+<div class="d-flex justify-content-between align-items-center">
     <input type="text" id="searchBox" class="form-control text-center" placeholder="Search" style="width: 50%;" oninput="filterskus()">
+    <div class="d-flex justify-content-between align-items-center">
+        <a href="{% url 'workorder-add-standard' %}" class="btn btn-outline-primary">Create Standard Item</a>
+    </div>
 </div>
 <!-- table for each item standard -->
 <table class="table table-hover m-4 p-4">

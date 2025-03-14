@@ -882,6 +882,21 @@ def standards(request):
     }
     return render(request, 'workorder/standards.html', context)
 
+def add_standard(request):
+    if request.method == 'POST':
+        form = ProdItemStdForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Item standard added successfully')
+            return redirect('workorder-standards')
+    else:
+        form = ProdItemStdForm()
+    context = {
+        'title': 'Add Standard',
+        'form': form,
+    }
+    return render(request, 'workorder/new_standard.html', context)
+
 @login_required
 # update standard
 def update_standard(request, id):
