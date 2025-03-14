@@ -14,16 +14,6 @@
                 </div>
             {% endfor %}
         </div>
-        {% if user.username == 'ivis_beza' %}
-            <script>
-                // Disable all form fields
-                document.querySelectorAll('form input, form select, form textarea').forEach(function(element) {
-                    element.disabled = true;
-                });
-            </script>
-        {% else %}
-            <button type="submit" class="btn btn-primary">Update</button>
-        {% endif %}
     </form>
 
     <!-- if image then show it -->
