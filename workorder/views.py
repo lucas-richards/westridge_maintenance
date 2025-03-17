@@ -879,7 +879,7 @@ def standards(request):
         return redirect('workorder-standards')
     else:
         for item in items:
-            item.points = round((1 / (item.pph / item.people_inline) if item.people_inline and item.pph != 0 else 0 + round(item.setup_time * item.setup_people, 1) if item.setup_time else 0) * 1000, 1)
+            item.points = round((1 / (item.pph / item.people_inline) if item.people_inline and item.pph != 0 else 0 + round(item.setup_time * item.setup_people, 1) if item.setup_time else 0) * 1000, 2)
 
     context = {
         'title': 'Standards',
