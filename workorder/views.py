@@ -873,9 +873,14 @@ def standards(request):
             item.people_inline = request.POST.get(f'people_inline_{item.id}')
             item.setup_time = request.POST.get(f'setup_time_{item.id}')
             item.setup_people = request.POST.get(f'setup_people_{item.id}')
+            
             item.save()
         messages.success(request, 'Item standards updated successfully')
         return redirect('workorder-standards')
+    else:
+        for item in items:
+            item.points = round((1 / (item.pph / item.people_inline) if item.people_inline and item.pph != 0 else 0 + round(item.setup_time * item.setup_people, 1) if item.setup_time else 0) * 1000, 1)
+
     context = {
         'title': 'Standards',
         'items': items,

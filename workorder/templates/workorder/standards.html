@@ -25,6 +25,7 @@
             <th style="width: 7%; text-align: center;">Setup People</th>
             <th style="width: 7%; text-align: center;">Line Setup</th>
             <th style="width: 20%; text-align: center;">Notes</th>
+            <th style="width: 7%; text-align: center;">Points</th>
         </tr>
     </thead>
     <tbody>
@@ -51,6 +52,7 @@
             <td></td>
             {% endif %}
             <td class="text-center"><small>{{ item.notes|default:"" }}</small></td>
+            <td class="text-center">{{ item.points|default:"-" }}</td>
         </tr>
         {% endfor %}
     </tbody>
