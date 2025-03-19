@@ -1,0 +1,35 @@
+{% extends "workorder/tabs_nav.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+{% if user.is_authenticated %}
+
+    
+    <div>
+        <h2>Record</h2>
+        <p>{{ record }}</p>
+    </div>
+    <div>
+        <h2>Items Flag</h2>
+        <p>{{ items_flag }}</p>
+    </div>
+    <div>
+        <h2>Items Boolean</h2>
+        <p>{{ items_boolean }}</p>
+    </div>
+    <div>
+        <button type="button" onclick="addItem('flag')">Add Flag Item</button>
+        <button type="button" onclick="addItem('boolean')">Add Boolean Item</button>
+    </div>
+
+    <script>
+        function addItem(type) {
+            // Add your logic to handle adding items here
+            alert('Add ' + type + ' item');
+        }
+    </script>
+
+
+{% endif %}
+
+{% endblock content %}

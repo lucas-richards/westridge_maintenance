@@ -234,14 +234,16 @@
                                     </div>
                                 </div>
 
-                                ${data.last_record_purchase_parts.length > 0 ? `
-                                    <p><strong>Purchase Parts:</strong></p>
-                                        <ol >
-                                            ${data.last_record_purchase_parts.map(item => `
-                                              <li> ${item.title}</li>
-                                            `).join('')}
-                                        </ol>
-                                ` : ''}
+                                
+                                <p><strong>Check List Items: <a href="${data.last_record_id}" >+</a></strong></p>
+                                <ol id="checklist-items">
+                                    ${data.last_record_purchase_parts.length > 0 ? `
+                                    ${data.last_record_purchase_parts.map(item => `
+                                        <li> ${item.title}</li>
+                                    `).join('')}
+                                    ` : ''}
+                                    
+                                </ol>
 
                                
                                 <h4 class="mt-2 mr-2">Records History</h4>
@@ -378,8 +380,6 @@
 });
 
 </script>
-
-
 
 
 

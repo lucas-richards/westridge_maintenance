@@ -431,6 +431,7 @@ def workorder(request, id):
                             for record in records
                         ],
                 'last_record_status': last_record.status if last_record else '',
+                'last_record_id': last_record.id if last_record else '',
                 'last_record_checklist_items': [
                     {
                         'id': item.id, 
@@ -680,6 +681,21 @@ def add_workorder_record(request):
         'form': form,
     }
     return render(request, 'workorder/new_workorder_record.html', context)
+
+def workorder_record_items(request, id, id2):
+    workorder = WorkOrder.objects.get(id=id)
+    record = WorkOrderRecord.objects.get(id=id2)
+    items_flag = CheckListItem.objects.filter(workorder_record=record)
+    # change query to a dictionay
+    items_flag = [{'id': item.id, 'title': item.title, 'description': item.description, 'status': item.status, 'due_date': item.due_date.strftime('%m-%d-%Y') if item.due_date else '', 'attachments': item.attachments.url if item.attachments else '', 'notes': item.notes} for item in items_flag]
+    items_boolean = PurchasePart.objects.filter(workorder_record=record)
+    context = {
+        'workorder': workorder,
+        'record': record,
+        'items_flag': items_flag,
+        'items_boolean': items_boolean
+    }
+    return render(request, 'workorder/record_items.html', context)
 
 
 @login_required

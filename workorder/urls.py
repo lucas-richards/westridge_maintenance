@@ -15,6 +15,8 @@ urlpatterns = [
     path('vendor/edit/<int:id>/', views.edit_vendor, name='workorder-edit-vendor'),
     path('vendor/delete/<int:id>/', views.delete_vendor, name='workorder-delete-vendor'),
     path('workorders/', views.workorders, name='workorder-workorders'),
+    
+    path('workorder/<int:id>/<int:id2>/', views.workorder_record_items, name='workorder-record-items'),
     path('workorder/<int:id>/', views.workorder_page, name='workorder-page'),  # For rendering the page
     path('workorder/<int:id>/json/', views.workorder, name='workorder-json'),  # For returning JSON data
     path('workorder/add/', views.add_workorder, name='workorder-add-workorder'),
