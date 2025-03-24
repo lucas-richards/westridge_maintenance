@@ -234,8 +234,8 @@
                                     </div>
                                 </div>
 
+                                <p><strong>Check List Items:{% if user.is_authenticated %} <a href="${data.last_record_id}" >+</a></strong>{% endif %}</p>
                                 
-                                <p><strong>Check List Items: <a href="${data.last_record_id}" >+</a></strong></p>
                                 <ol id="checklist-items">
                                     ${data.last_record_purchase_parts.length > 0 ? `
                                     ${data.last_record_purchase_parts.map(item => `

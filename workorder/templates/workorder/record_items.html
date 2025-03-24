@@ -14,7 +14,19 @@
         <ul class="mb-4" id="items-flag-list">
             {% if items_flag %}
             {% for item in items_flag %}
-                <li>{{ item.title }}</li>
+                <li>
+                    <div style="display: flex; flex-direction: row; align-items: flex-start; justify-content: space-between;">
+                        <div style="flex: 1; margin-right: 10px;">{{ item.title }}</div>
+                        <div style="flex: 1;">
+                            <select class="form-control" style="width: 25%;">
+                                <option>Select</option>
+                                <option>Pass</option>
+                                <option>Fail</option>
+                                <option>Flag</option>
+                            </select>
+                        </div>
+                    </div>
+                </li>
             {% endfor %}
             {% else %}
             <p>No records found</p>
@@ -25,7 +37,14 @@
         <ul class="mb-4" id="items-boolean-list">
             {% if items_boolean %}
             {% for item in items_boolean %}
-            <li>{{ item.title }}</li>
+            <li>
+                <div class="row align-items-center">
+                    <div class="col">{{ item.title }}</div>
+                    <div class="col">
+                        <input type="checkbox" style="transform: scale(1.5);">
+                    </div>
+                </div>
+            </li>
             {% endfor %}
             {% else %}
             <p>No records found</p>
@@ -48,7 +67,30 @@
                     noRecords.remove();
                 }
                 const listItem = document.createElement('li');
-                listItem.textContent = itemTitle;
+                if (type === 'flag') {
+                    listItem.innerHTML = `
+                        <div style="display: flex; flex-direction: row; align-items: flex-start; justify-content: space-between;">
+                            <div style="flex: 1; margin-right: 10px;">${itemTitle}</div>
+                            <div style="flex: 1;">
+                                <select class="form-control" style="width: 25%;">
+                                    <option>Select</option>
+                                    <option>Pass</option>
+                                    <option>Fail</option>
+                                    <option>Flag</option>
+                                </select>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    listItem.innerHTML = `
+                        <div class="row align-items-center">
+                            <div class="col">${itemTitle}</div>
+                            <div class="col">
+                                <input type="checkbox" style="transform: scale(1.5);">
+                            </div>
+                        </div>
+                    `;
+                }
                 list.appendChild(listItem);
             }
         }
