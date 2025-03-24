@@ -689,6 +689,7 @@ def workorder_record_items(request, id, id2):
     # change query to a dictionay
     items_flag = [{'id': item.id, 'title': item.title, 'description': item.description, 'status': item.status, 'due_date': item.due_date.strftime('%m-%d-%Y') if item.due_date else '', 'attachments': item.attachments.url if item.attachments else '', 'notes': item.notes} for item in items_flag]
     items_boolean = PurchasePart.objects.filter(workorder_record=record)
+    items_boolean = [{'id': part.id, 'title': part.title, 'description': part.description, 'completed': part.completed} for part in items_boolean]
     context = {
         'workorder': workorder,
         'record': record,

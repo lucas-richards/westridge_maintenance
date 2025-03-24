@@ -6,16 +6,31 @@
 
     
     <div>
-        <h2>Record</h2>
-        <p>{{ record }}</p>
+        <h2>{{ record.workorder.asset.name }}</h2>
+        <h4 class="ml-2">Work Order: {{ record.workorder.title }}</h4>
     </div>
-    <div>
-        <h2>Items Flag</h2>
-        <p>{{ items_flag }}</p>
-    </div>
-    <div>
-        <h2>Items Boolean</h2>
-        <p>{{ items_boolean }}</p>
+    <div class="ml-4">
+        <h4>Items Flag (Pass/Fail/Flag)</h4>
+        <ul class="mb-4" id="items-flag-list">
+            {% if items_flag %}
+            {% for item in items_flag %}
+                <li>{{ item.title }}</li>
+            {% endfor %}
+            {% else %}
+            <p>No records found</p>
+            {% endif %}
+        </ul>
+    
+        <h4>Items Boolean (Checkbox)</h4>
+        <ul class="mb-4" id="items-boolean-list">
+            {% if items_boolean %}
+            {% for item in items_boolean %}
+            <li>{{ item.title }}</li>
+            {% endfor %}
+            {% else %}
+            <p>No records found</p>
+            {% endif %}
+        </ul>
     </div>
     <div>
         <button type="button" onclick="addItem('flag')">Add Flag Item</button>
@@ -24,8 +39,18 @@
 
     <script>
         function addItem(type) {
-            // Add your logic to handle adding items here
-            alert('Add ' + type + ' item');
+            const itemTitle = prompt('Enter item title:');
+            if (itemTitle) {
+                const listId = type === 'flag' ? 'items-flag-list' : 'items-boolean-list';
+                const list = document.getElementById(listId);
+                const noRecords = list.querySelector('p');
+                if (noRecords) {
+                    noRecords.remove();
+                }
+                const listItem = document.createElement('li');
+                listItem.textContent = itemTitle;
+                list.appendChild(listItem);
+            }
         }
     </script>
 
