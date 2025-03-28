@@ -220,14 +220,7 @@
                                         ${data.assigned_to ? `<p><strong>Assigned To:</strong> ${data.assigned_to}</p>` : ''}
                                         ${data.attachments ? `<p><strong>Attachment: </strong><a target="_blank" href="${data.attachments}">link</a></p>` : ''}
                                         
-                                        ${data.last_record_checklist_items && data.last_record_checklist_items.length > 0 ? `
-                                            <p><strong>Checklist Items:</strong></p>
-                                            <div class="row">
-                                                ${data.last_record_checklist_items.map(item => `
-                                                    <small class="ml-2 col-md-8">${item.title}</small>
-                                                `).join('')}
-                                            </div>
-                                        ` : ''}
+                                        
                                     </div>
                                     <div class="col-md-3" data-toggle="modal" data-target="#exampleModal">
                                         ${data.image_url ? `<img src="${data.image_url}" alt="image missing">` : ''}
@@ -237,9 +230,16 @@
                                 <p><strong>Check List Items:{% if user.is_authenticated %} <a href="${data.last_record_id}" >+</a></strong>{% endif %}</p>
                                 
                                 <ol id="checklist-items">
+                                    ${data.last_record_checklist_items && data.last_record_checklist_items.length > 0 ? `
+                                    ${data.last_record_checklist_items.map(item => `
+                                        <li>(Boolean) ${item.title}</li>
+                                    `).join('')}
+                                            
+                                    ` : ''}
+
                                     ${data.last_record_purchase_parts.length > 0 ? `
                                     ${data.last_record_purchase_parts.map(item => `
-                                        <li> ${item.title}</li>
+                                        <li>(Flag) ${item.title} </li>
                                     `).join('')}
                                     ` : ''}
                                     
