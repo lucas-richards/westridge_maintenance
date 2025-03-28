@@ -698,6 +698,44 @@ def workorder_record_items(request, id, id2):
     }
     return render(request, 'workorder/record_items.html', context)
 
+@csrf_exempt
+@require_http_methods(["POST"])
+def workorder_record_additems(request, id, id2):
+    try:
+        workorder = WorkOrder.objects.get(id=id)
+        record = WorkOrderRecord.objects.get(id=id2)
+        data = json.loads(request.body)
+
+        item_title = data.get('title')
+        item_type = data.get('type')  # 'flag' or 'boolean'
+        print('item_title', item_title)
+        print('item_type', item_type)
+
+        if not item_title or not item_type:
+            return JsonResponse({'error': 'Invalid data. Both title and type are required.'}, status=400)
+
+        if item_type == 'flag':
+            CheckListItem.objects.create(
+                title=item_title,
+                workorder_record=record
+            )
+        elif item_type == 'boolean':
+            PurchasePart.objects.create(
+                title=item_title,
+                workorder_record=record
+            )
+        else:
+            return JsonResponse({'error': 'Invalid type. Must be "flag" or "boolean".'}, status=400)
+
+        return JsonResponse({'message': 'Item added successfully'}, status=201)
+
+    except WorkOrder.DoesNotExist:
+        return JsonResponse({'error': 'WorkOrder not found'}, status=404)
+    except WorkOrderRecord.DoesNotExist:
+        return JsonResponse({'error': 'WorkOrderRecord not found'}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+
 
 @login_required
 def production(request):

@@ -57,41 +57,63 @@
     </div>
 
     <script>
-        function addItem(type) {
+        async function addItem(type) {
             const itemTitle = prompt('Enter item title:');
+            const workorderId = '{{ record.workorder.id }}';
+            const recordId = '{{ record.id }}';
             if (itemTitle) {
-                const listId = type === 'flag' ? 'items-flag-list' : 'items-boolean-list';
-                const list = document.getElementById(listId);
-                const noRecords = list.querySelector('p');
-                if (noRecords) {
-                    noRecords.remove();
-                }
-                const listItem = document.createElement('li');
-                if (type === 'flag') {
-                    listItem.innerHTML = `
-                        <div style="display: flex; flex-direction: row; align-items: flex-start; justify-content: space-between;">
-                            <div style="flex: 1; margin-right: 10px;">${itemTitle}</div>
-                            <div style="flex: 1;">
-                                <select class="form-control" style="width: 25%;">
-                                    <option>Select</option>
-                                    <option>Pass</option>
-                                    <option>Fail</option>
-                                    <option>Flag</option>
-                                </select>
+                try {
+                    const response = await fetch(`/maintenance/workorder/${workorderId}/${recordId}/additem/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ title: itemTitle, type: type })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        alert(`Error: ${errorData.error}`);
+                        return;
+                    }
+
+                    const listId = type === 'flag' ? 'items-flag-list' : 'items-boolean-list';
+                    const list = document.getElementById(listId);
+                    const noRecords = list.querySelector('p');
+                    if (noRecords) {
+                        noRecords.remove();
+                    }
+                    const listItem = document.createElement('li');
+                    if (type === 'flag') {
+                        listItem.innerHTML = `
+                            <div style="display: flex; flex-direction: row; align-items: flex-start; justify-content: space-between;">
+                                <div style="flex: 1; margin-right: 10px;">${itemTitle}</div>
+                                <div style="flex: 1;">
+                                    <select class="form-control" style="width: 25%;">
+                                        <option>Select</option>
+                                        <option>Pass</option>
+                                        <option>Fail</option>
+                                        <option>Flag</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                    `;
-                } else {
-                    listItem.innerHTML = `
-                        <div class="row align-items-center">
-                            <div class="col">${itemTitle}</div>
-                            <div class="col">
-                                <input type="checkbox" style="transform: scale(1.5);">
+                        `;
+                    } else {
+                        listItem.innerHTML = `
+                            <div class="row align-items-center">
+                                <div class="col">${itemTitle}</div>
+                                <div class="col">
+                                    <input type="checkbox" style="transform: scale(1.5);">
+                                </div>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    }
+                    list.appendChild(listItem);
+                } catch (error) {
+                    alert('An error occurred while adding the item.');
+                    console.error(error);
                 }
-                list.appendChild(listItem);
             }
         }
     </script>
