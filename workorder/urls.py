@@ -18,6 +18,7 @@ urlpatterns = [
     
     path('workorder/<int:id>/<int:id2>/', views.workorder_record_items, name='workorder-record-items'),
     path('workorder/<int:id>/<int:id2>/additem/', views.workorder_record_additems, name='workorder-record-additems'), # For adding item in AJAX
+    path('workorder/<int:id>/<int:id2>/deleteitem/', views.workorder_record_deleteitem, name='workorder-record-deleteitem'), # For deleting item in AJAX
     path('workorder/<int:id>/', views.workorder_page, name='workorder-page'),  # For rendering the page
     path('workorder/<int:id>/json/', views.workorder, name='workorder-json'),  # For returning JSON data
     path('workorder/add/', views.add_workorder, name='workorder-add-workorder'),

@@ -737,6 +737,28 @@ def workorder_record_additems(request, id, id2):
         return JsonResponse({'error': 'Invalid JSON format'}, status=400)
 
 
+@csrf_exempt
+@require_http_methods(["POST"])
+@login_required
+def workorder_record_deleteitem(request, id, id2):
+    workorder = WorkOrder.objects.get(id=id)
+    record = WorkOrderRecord.objects.get(id=id2)
+    item_id = request.POST.get('item_id')
+    item_type = request.POST.get('item_type')  # 'flag' or 'boolean'
+    try:
+        if item_type == 'flag':
+            item = CheckListItem.objects.get(id=item_id)
+        elif item_type == 'boolean':
+            item = PurchasePart.objects.get(id=item_id)
+        else:
+            return JsonResponse({'error': 'Invalid item type'}, status=400)
+        
+        item.delete()
+        return JsonResponse({'message': 'Item deleted successfully'}, status=200)
+    except (CheckListItem.DoesNotExist, PurchasePart.DoesNotExist):
+        return JsonResponse({'error': 'Item not found'}, status=404)
+
+
 @login_required
 def production(request):
     items = ProdItemStd.objects.all().order_by('sku')
