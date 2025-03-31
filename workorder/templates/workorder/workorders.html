@@ -232,14 +232,14 @@
                                 <ol id="checklist-items">
                                     ${data.last_record_checklist_items && data.last_record_checklist_items.length > 0 ? `
                                     ${data.last_record_checklist_items.map(item => `
-                                        <li>(Boolean) ${item.title}</li>
+                                        <li>(Flag) ${item.title}</li>
                                     `).join('')}
                                             
                                     ` : ''}
 
                                     ${data.last_record_purchase_parts.length > 0 ? `
                                     ${data.last_record_purchase_parts.map(item => `
-                                        <li>(Flag) ${item.title} </li>
+                                        <li>(Boolean) ${item.title} </li>
                                     `).join('')}
                                     ` : ''}
                                     
