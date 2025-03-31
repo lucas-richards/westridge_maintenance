@@ -743,8 +743,11 @@ def workorder_record_additems(request, id, id2):
 def workorder_record_deleteitem(request, id, id2):
     workorder = WorkOrder.objects.get(id=id)
     record = WorkOrderRecord.objects.get(id=id2)
-    item_id = request.POST.get('item_id')
-    item_type = request.POST.get('item_type')  # 'flag' or 'boolean'
+    data = json.loads(request.body)
+    item_id = data.get('item_id')
+    item_type = data.get('item_type')  # 'flag' or 'boolean'
+    print('item_id', item_id)
+    print('item_type', item_type)
     try:
         if item_type == 'flag':
             item = CheckListItem.objects.get(id=item_id)
