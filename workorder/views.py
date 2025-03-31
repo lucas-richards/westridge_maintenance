@@ -641,6 +641,7 @@ def workorder_record(request, id):
                     print('request.POST', request.POST)
                     for part in record.purchase_parts.all():
                         value = request.POST.get(f'purchase_part_{part.id}', False)
+                        print('value', value)
                         part.completed = True if value == 'on' else False
                         part.save()
                     record.save()

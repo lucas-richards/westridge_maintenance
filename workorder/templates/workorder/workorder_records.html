@@ -230,7 +230,7 @@
                                                 ${data.purchase_parts.map(item => `
                                                 
                                                 <div class="form-group form-check">
-                                                    <input class="form-check-input" type="checkbox" id="purchase_part_${item.id}" name="purchase_part_${item.id}" ${item.purchased ? 'checked' : ''}>
+                                                    <input class="form-check-input" type="checkbox" id="purchase_part_${item.id}" name="purchase_part_${item.id}" ${item.completed ? 'checked' : ''}>
                                                     <label class="form-check-label" for="purchase_part_${item.id}">${item.title}</label>
                                                 </div>
                                             `).join('')}</div>` : ''}
