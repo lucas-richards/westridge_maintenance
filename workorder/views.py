@@ -623,7 +623,7 @@ def workorder_record(request, id):
                     record.status = status
                     completed_on = request.POST.get('completed_on')
                     if completed_on:
-                        # Convert string to a timezone-aware datetime
+                        # Convert string to a timezone-aware date time
                         record.completed_on = timezone.make_aware(
                             timezone.datetime.strptime(completed_on, '%Y-%m-%d')
                         )
