@@ -87,7 +87,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 
-<!-- KPI1 mychart -->
+<!-- chart -->
 <script>
     Chart.register(ChartDataLabels);
     
@@ -112,8 +112,11 @@
             scales: {
                 y: {
                     beginAtZero: true,
-                    min: 0,
-                    max: 300,
+                    max: function() {
+                        const maxOverdue = Math.max(...{{ status_kpi_values|safe }});
+                        const maxCompleted = Math.max(...{{ status_kpi_values|safe }});
+                        return Math.max(maxOverdue, maxCompleted) + 20;
+                    }(),
                 }
             },
             plugins: {
@@ -132,7 +135,7 @@
         }
     });
 </script>
-<!-- KPI2 chart -->
+<!-- chart5 -->
 <script>
   
     
@@ -183,7 +186,7 @@
         }
     });
 </script>
-<!-- KPI3 chart -->
+<!-- chart1 -->
 <script>
   
     
@@ -207,9 +210,12 @@
         options: {
             scales: {
                 y: {
-                    beginAtZero: true,
-                    min: 100,
-                    max: 130,
+                    min: 110,
+                    max: function() {
+                        const maxOverdue = Math.max(...{{ wordordersqty_kpi_values|safe }});
+                        const maxCompleted = Math.max(...{{ wordordersqty_kpi_values|safe }});
+                        return Math.max(maxOverdue, maxCompleted) + 20;
+                    }(),
                     
                 }
             },
@@ -226,7 +232,7 @@
         }
     });
 </script>
-<!-- KPI3 productivity chart -->
+<!-- chart6 -->
 <script>
     const ctx6 = document.getElementById('myChart6').getContext('2d');
     
