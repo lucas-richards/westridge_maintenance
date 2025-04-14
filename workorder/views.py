@@ -597,6 +597,7 @@ def workorder_record(request, id):
                 'workorder_attachment': record.workorder.attachments.url if record.workorder.attachments else '',
                 'workorder_asset': record.workorder.asset.code if record.workorder.asset else '',
                 'workorder_asset_name': record.workorder.asset.name if record.workorder.asset else '',
+                'workorder_lockout': record.workorder.lockout if record.workorder else '',
                 'status': record.status,
                 'due_date': record.due_date.strftime('%m-%d-%Y') if record.due_date else '',
                 'completed_on': record.completed_on.strftime('%Y-%m-%d') if record.completed_on else '',

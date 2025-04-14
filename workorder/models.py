@@ -153,6 +153,7 @@ class WorkOrder(models.Model):
         choices=RECURRENCE,
         default='Once',
     )
+    lockout = models.BooleanField(default=True)
     asset = models.ForeignKey(Asset, on_delete=models.SET_NULL, null=True, blank=True)
     image = models.ImageField(upload_to='wo_images/', null=True, blank=True)
     attachments = models.FileField(upload_to=workorder_attachment_path, null=True, blank=True)

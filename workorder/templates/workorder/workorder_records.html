@@ -221,6 +221,11 @@
                                         <label for="completed_on">Completed On:</label>
                                         <input type="date" class="form-control" id="completed_on" name="completed_on" value="${data.completed_on}">
                                     </div>
+                                    ${data.workorder_lockout? `
+                                    <div class="form-group form-check">
+                                        <input class="form-check-input" type="checkbox" id="lockout"}>
+                                        <label class="form-check-label" for="lockout">Followed Lockout Procedure</label>
+                                    </div>` : ''}
 
                                     ${data.purchase_parts && data.purchase_parts.length > 0 
                                     
@@ -372,6 +377,18 @@
             Swal.fire({
             title: 'Incomplete Checklist',
             text: 'Please select a status for all checklist items.',
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#246cff'
+            });
+            return false; // Prevent form submission
+        }
+        // if a id="lockout" exists check that is checked if not false
+        const lockoutCheckbox = document.getElementById('lockout');
+        if (status.toLowerCase() === 'done' && lockoutCheckbox && !lockoutCheckbox.checked) {
+            Swal.fire({
+            title: 'Lockout Procedure',
+            text: 'Please confirm that the lockout procedure has been followed.',
             icon: 'warning',
             confirmButtonText: 'OK',
             confirmButtonColor: '#246cff'
