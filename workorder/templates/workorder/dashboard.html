@@ -293,7 +293,7 @@
                         return context.dataset.data[context.dataIndex] !== 0; // Do not display label if value is 0
                     },
                     anchor: 'end',
-                    align: 'end', // Change align to 'end' to avoid overlapping
+                    align: 'end', // Change align to 'end' to avoid overlapping.
                     offset: function(context) {
                         return context.datasetIndex === 1 || context.datasetIndex === 2 ? 10 : 0; // Add offset to the second and third datasets
                     },
