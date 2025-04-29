@@ -124,35 +124,65 @@ class Command(BaseCommand):
         # Maintenance APP
         # works great
         # schedule a work order record according to the recurrence and if the last work order record is done or cancelled
+        new_workorders = []
         try:
             work_orders = WorkOrder.objects.all()
             for work_order in work_orders:
                 # last_work_order_record = work_order.workorderrecord_set.last()
                 last_work_order_record = work_order.workorderrecord_set.order_by('due_date').last()
                 if last_work_order_record:
-                    print('last_work_order_record:', last_work_order_record, work_order.recurrence)
                     if last_work_order_record.status in ['done', 'cancelled']:
                         if last_work_order_record.completed_on:
                             if work_order.recurrence == 'Daily':
-                                new_due_date = last_work_order_record.completed_on + dt.timedelta(days=1)
+                                if last_work_order_record.completed_on + dt.timedelta(days=1) > last_work_order_record.due_date:
+                                    new_due_date = last_work_order_record.completed_on + dt.timedelta(days=1)
+                                else:
+                                    new_due_date = last_work_order_record.due_date + dt.timedelta(days=1)
+                                print('Daily:',last_work_order_record.due_date, new_due_date)
                             elif work_order.recurrence == 'Weekly':
-                                new_due_date = last_work_order_record.completed_on + dt.timedelta(weeks=1)
+                                if last_work_order_record.completed_on + dt.timedelta(weeks=1) > last_work_order_record.due_date:
+                                    new_due_date = last_work_order_record.completed_on + dt.timedelta(weeks=1)
+                                else:
+                                    new_due_date = last_work_order_record.due_date + dt.timedelta(days=1)
+                                print('Weekly:',last_work_order_record.due_date, new_due_date)
                             elif work_order.recurrence == 'Monthly':
-                                new_due_date = last_work_order_record.completed_on + relativedelta(months=1)
+                                if last_work_order_record.completed_on + relativedelta(months=1) > last_work_order_record.due_date:
+                                    new_due_date = last_work_order_record.completed_on + relativedelta(months=1)
+                                else:
+                                    new_due_date = last_work_order_record.due_date + dt.timedelta(days=1)
+                                print('Monthly:',last_work_order_record.due_date, new_due_date)
                             elif work_order.recurrence == 'Quarterly':
-                                new_due_date = last_work_order_record.completed_on + relativedelta(months=3)
+                                if last_work_order_record.completed_on + relativedelta(months=3) > last_work_order_record.due_date:
+                                    new_due_date = last_work_order_record.completed_on + relativedelta(months=3)
+                                else:
+                                    new_due_date = last_work_order_record.due_date + dt.timedelta(days=1)
+                                print('Quarterly:',last_work_order_record.due_date, new_due_date)
                             elif work_order.recurrence == 'Biannually':
-                                new_due_date = last_work_order_record.completed_on + relativedelta(months=6)
+                                if last_work_order_record.completed_on + relativedelta(months=6) > last_work_order_record.due_date:
+                                    new_due_date = last_work_order_record.completed_on + relativedelta(months=6)
+                                else:
+                                    new_due_date = last_work_order_record.due_date + dt.timedelta(days=1)
+                                print('Biannually:',last_work_order_record.due_date, new_due_date)
                             elif work_order.recurrence == 'Yearly':
-                                new_due_date = last_work_order_record.completed_on + relativedelta(years=1)
+                                if last_work_order_record.completed_on + relativedelta(years=1) > last_work_order_record.due_date:
+                                    new_due_date = last_work_order_record.completed_on + relativedelta(years=1)
+                                else:
+                                    new_due_date = last_work_order_record.due_date + dt.timedelta(days=1)
+                                print('Yearly:',last_work_order_record.due_date, new_due_date)
                             elif work_order.recurrence == '3 Years':
-                                new_due_date = last_work_order_record.completed_on + relativedelta(years=3)
+                                if last_work_order_record.completed_on + relativedelta(years=3) > last_work_order_record.due_date:
+                                    new_due_date = last_work_order_record.completed_on + relativedelta(years=3)
+                                else:
+                                    new_due_date = last_work_order_record.due_date + dt.timedelta(days=1)
+                                print('3 Years:',last_work_order_record.due_date, new_due_date)
                             else:
                                 new_due_date = ''
 
                             if new_due_date:
                                 new = WorkOrderRecord.objects.create(workorder=work_order, due_date=new_due_date)
                                 print('new:', new)
+                                print('due_date:', new.due_date)
+                                new_workorders.append(new)
                         
                         if last_work_order_record.checklist_items.exists():
                             for item in last_work_order_record.checklist_items.all():
@@ -187,8 +217,6 @@ class Command(BaseCommand):
             # get the last record or each work order and check for those with different from done and cancelled if they are overdue by checking if the due date is later than today
             work_orders = WorkOrder.objects.all()
             productivity_value = WorkOrderRecord.objects.filter(status='done', completed_on__date=today).count()
-            done_today_records = WorkOrderRecord.objects.filter(status='done', completed_on__date=today)
-            
             overdue = 0
             overdue_high = 0
             for work_order in work_orders:
@@ -199,7 +227,6 @@ class Command(BaseCommand):
                         overdue_high += 1
                     else:
                         overdue += 1
-                    print('overdue:', last_work_order_record)
             # save to over due kpi
             self.save_kpi2('Overdue', overdue)
             self.save_kpi2('Overdue High Criticality', overdue_high)
@@ -207,8 +234,6 @@ class Command(BaseCommand):
             print('overdue:', overdue)
             print('overdue_high:', overdue_high)
             print('productivity_value:', productivity_value)
-            for record in done_today_records:
-                print(f"Description: {record.workorder.asset}, Completed On: {record.completed_on}")
 
 
             # if there are no work orders records for today, then set the productivity kpi value to 0
@@ -234,6 +259,40 @@ class Command(BaseCommand):
             self.save_kpi2('Work Orders Qty', work_orders_qty)
 
             self.stdout.write(self.style.SUCCESS('Successfully saved daily maintenance KPI values'))
+
+            # send email succesfully 
+            email_user = os.environ.get('EMAIL_USER')
+            email_password = os.environ.get('EMAIL_PASS')
+            author_email = os.environ.get('EMAIL_USER')
+            recipients = [f"lrichards@westridgelabs.com"]
+            subject = f'Maintenance KPI Calculation'
+            message = f'''
+            <div style="padding-left: 16px; border: 1px solid #ddd; border-radius: 4px;">
+                <div style=" border-bottom: 1px solid #ddd;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: baseline;">
+                            <p style="min-width: 50px; margin-right: 8px; font-weight: bold;">Success</p>
+                            <p class="truncate" style="min-width: 250px; margin-right: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">KPI Calculation was successful</p>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 16px;">
+                    <p style="font-weight: bold;">New Work Orders Records Created:</p>
+                    <ul>
+                        {''.join([f'<li>{work_order}</li>' for work_order in new_workorders])}
+                    </ul>
+                </div>
+            '''
+            try:
+                send_mail(subject, '', email_user, recipients, html_message=message, auth_user=email_user, auth_password=email_password)
+                logging.info(f'Successfully sent reminder update email to {recipients}')
+                print(f'Successfully sent reminder update email to {recipients}')
+            except Exception as e:
+                logging.error(f'Error sending reminder update email to {recipients}: {str(e)}')
+                print(f'Error sending reminder update email to {recipients}: {str(e)}')
+
+
+
         except Exception as e:
             email_user = os.environ.get('EMAIL_USER')
             email_password = os.environ.get('EMAIL_PASS')
@@ -259,6 +318,8 @@ class Command(BaseCommand):
             except Exception as e:
                 logging.error(f'Error sending reminder update email to {recipients}: {str(e)}')
                 print(f'Error sending reminder update email to {recipients}: {str(e)}')
+
+
 
                     
 

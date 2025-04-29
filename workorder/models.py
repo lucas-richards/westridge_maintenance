@@ -204,7 +204,7 @@ class WorkOrderRecord(models.Model):
     comments = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return f"#{self.id} - {self.workorder.asset} - {self.workorder.title} - {self.due_date}"
+        return f"#{self.id} - asset-id:{self.workorder.asset.id if self.workorder.asset else 'None'} - title:{self.workorder.title if self.workorder.title else 'None'} - due date:{self.due_date if self.due_date else 'None'}"
 
     # when saved check how many records are with status done today and update the kpi
     def save(self, *args, **kwargs):
