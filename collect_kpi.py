@@ -19,15 +19,6 @@ from django.core.mail import send_mail
 
 class Command(BaseCommand):
     help = 'Calculate and save daily KPI values'
-    
-    def save_kpi(self, kpi_name, value):
-        kpi, created = KPI.objects.get_or_create(name=kpi_name)
-        today = timezone.now().date()
-        KPIValue.objects.update_or_create(
-            kpi=kpi,
-            date=today,
-            defaults={'value': value}
-        )
 
     def save_kpi2(self, kpi_name, value):
         kpi, created = KPI2.objects.get_or_create(name=kpi_name)
@@ -195,6 +186,9 @@ class Command(BaseCommand):
 
             # get the last record or each work order and check for those with different from done and cancelled if they are overdue by checking if the due date is later than today
             work_orders = WorkOrder.objects.all()
+            productivity_value = WorkOrderRecord.objects.filter(status='done', completed_on__date=today).count()
+            done_today_records = WorkOrderRecord.objects.filter(status='done', completed_on__date=today)
+            
             overdue = 0
             overdue_high = 0
             for work_order in work_orders:
@@ -209,8 +203,12 @@ class Command(BaseCommand):
             # save to over due kpi
             self.save_kpi2('Overdue', overdue)
             self.save_kpi2('Overdue High Criticality', overdue_high)
+            self.save_kpi2('Productivity', productivity_value)
             print('overdue:', overdue)
             print('overdue_high:', overdue_high)
+            print('productivity_value:', productivity_value)
+            for record in done_today_records:
+                print(f"Description: {record.workorder.asset}, Completed On: {record.completed_on}")
 
 
             # if there are no work orders records for today, then set the productivity kpi value to 0
