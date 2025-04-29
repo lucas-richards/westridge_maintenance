@@ -223,7 +223,7 @@
                                     </div>
                                     ${data.workorder_lockout? `
                                     <div class="form-group form-check">
-                                        <input class="form-check-input" type="checkbox" id="lockout"}>
+                                        <input class="form-check-input" type="checkbox" id="lockout" ${data.status === 'done' ? 'checked' : ''}>
                                         <label class="form-check-label" for="lockout">Followed Lockout Procedure</label>
                                     </div>` : ''}
 
