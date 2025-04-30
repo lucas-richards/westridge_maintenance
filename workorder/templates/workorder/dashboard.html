@@ -280,9 +280,10 @@
                     beginAtZero: true,
                     min: 0,
                     max: function() {
-                        const maxOverdue = Math.max(...{{ overdue_kpi_values|safe }});
-                        const maxCompleted = Math.max(...{{ productivity_kpi_values|safe }});
-                        return Math.max(maxOverdue, maxCompleted) + 20;
+                        const maxSum = Math.max(...{{ overdue_kpi_values|safe }}.map((value, index) => 
+                            value + {{ productivity_kpi_values|safe }}[index] + {{ overdueH_kpi_values|safe }}[index]
+                        ));
+                        return maxSum + 10;
                     }(),
                     stacked: true,
                 }
